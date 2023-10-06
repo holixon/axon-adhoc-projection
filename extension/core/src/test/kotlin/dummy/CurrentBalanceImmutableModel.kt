@@ -1,6 +1,7 @@
 package io.holixon.axon.selectivereplay.dummy
 
 import io.holixon.axon.selectivereplay.ModelRepository
+import org.axonframework.common.caching.WeakReferenceCache
 import org.axonframework.eventhandling.EventHandler
 import org.axonframework.eventhandling.SequenceNumber
 import org.axonframework.eventhandling.Timestamp
@@ -40,4 +41,4 @@ data class CurrentBalanceImmutableModel(
 }
 
 class CurrentBalanceImmutableModelRepository(eventStore: EventStore) :
-  ModelRepository<CurrentBalanceImmutableModel>(eventStore, CurrentBalanceImmutableModel::class.java)
+  ModelRepository<CurrentBalanceImmutableModel>(eventStore, CurrentBalanceImmutableModel::class.java, WeakReferenceCache())

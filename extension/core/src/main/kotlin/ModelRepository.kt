@@ -4,9 +4,8 @@ import mu.KLogging
 import org.axonframework.common.caching.Cache
 import org.axonframework.common.caching.Cache.EntryListenerAdapter
 import org.axonframework.common.caching.NoCache
-import org.axonframework.eventsourcing.eventstore.DomainEventStream
 import org.axonframework.eventsourcing.eventstore.EventStore
-import java.util.Optional
+import java.util.*
 
 open class ModelRepository<T : Any>(
   private val eventStore : EventStore,

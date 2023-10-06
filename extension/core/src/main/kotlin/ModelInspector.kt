@@ -1,13 +1,7 @@
 package io.holixon.axon.selectivereplay
 
-import org.axonframework.messaging.annotation.AnnotatedHandlerInspector
-import org.axonframework.messaging.annotation.ClasspathHandlerDefinition
-import org.axonframework.messaging.annotation.ClasspathParameterResolverFactory
-import org.axonframework.messaging.annotation.HandlerDefinition
-import org.axonframework.messaging.annotation.MessageHandlingMember
-import org.axonframework.messaging.annotation.ParameterResolverFactory
+import org.axonframework.messaging.annotation.*
 import java.lang.reflect.Constructor
-import java.util.function.Consumer
 
 class ModelInspector<T>(
   val inspectedType: Class<T>
@@ -21,6 +15,10 @@ class ModelInspector<T>(
 
     inspectForMethods(parameterResolverFactory, handlerDefinition)
     inspectForConstructors(parameterResolverFactory, handlerDefinition)
+
+    if (constructors.isEmpty() && methods.isEmpty()) {
+      throw NoEventHandlersFoundException(inspectedType)
+    }
   }
 
 
@@ -38,11 +36,10 @@ class ModelInspector<T>(
 
   internal fun inspectForMethods(parameterResolverFactory: ParameterResolverFactory, handlerDefinition: HandlerDefinition) {
     inspectedType.getDeclaredMethods()
-      .filter { method -> method.returnType.equals(inspectedType) || method.returnType.equals(Void::class.java) }
       .forEach { method ->
         handlerDefinition.createHandler(inspectedType, method, parameterResolverFactory)
           .ifPresent {
-            if (!(method.returnType.equals(inspectedType) || method.returnType.equals(Void::class.java)))
+            if (!(method.returnType.equals(inspectedType) || method.returnType.equals(Void.TYPE)))
               throw IllegalReturnTypeException(inspectedType, method)
             if (methods.containsKey(it.payloadType())) {
               throw DuplicateHandlerException(inspectedType, it.payloadType())

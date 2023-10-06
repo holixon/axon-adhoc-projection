@@ -14,10 +14,10 @@ class ModelFactory<T>(
       val instance = createInstance(firstEvent)
       events.next() // mark first event as consumed
       return instance
-    } else (
-            // do not mark first event as consumed
-            return createInstance()
-            )
+    } else {
+      // do not mark first event as consumed
+      return createInstance()
+    }
   }
 
   fun createInstance(message: DomainEventMessage<*>): T {

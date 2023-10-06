@@ -5,14 +5,22 @@ import java.lang.reflect.Method
 
 class NoSuitableConstructorFoundException(
   private val clazz: Class<Any>
-) : Exception("No suitable constructor found. Was looking for either event constructor for class ${clazz.name} or default constructor")
+) :
+  Exception("No suitable constructor found. Was looking for either event constructor for class ${clazz.name} or default constructor")
 
 class DuplicateHandlerException(
-  private val clazz: Class<*>,
-  private val payloadClazz: Class<*>
-) : Exception("At least two eventHandlers in the annotated class $clazz are capable of handling a payload of type $payloadClazz. This can't be handled")
+  clazz: Class<*>,
+  payloadClazz: Class<*>
+) :
+  Exception("At least two eventHandlers in the annotated class $clazz are capable of handling a payload of type $payloadClazz. This can't be handled")
 
 class IllegalReturnTypeException(
-  private val clazz: Class<*>,
-  private val method: Method,
-) : Exception("Method $method of class $clazz has disallowed return type ${method.returnType}. Only void or $clazz is allowed here")
+  clazz: Class<*>,
+  method: Method,
+) :
+  Exception("Method $method of class $clazz has disallowed return type ${method.returnType}. Only void or $clazz is allowed here")
+
+class NoEventHandlersFoundException(
+  clazz: Class<*>,
+) :
+  Exception("Class $clazz has no handler defined.")
