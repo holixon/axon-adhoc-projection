@@ -1,25 +1,41 @@
 package io.holixon.axon.selectivereplay.dummy
 
 import io.holixon.axon.selectivereplay.ModelRepository
+import org.axonframework.eventhandling.EventHandler
+import org.axonframework.eventhandling.SequenceNumber
+import org.axonframework.eventhandling.Timestamp
 import org.axonframework.eventsourcing.eventstore.EventStore
+import org.axonframework.messaging.annotation.MessageHandler
+import java.time.Instant
 import java.util.*
 
 data class CurrentBalanceImmutableModel(
   val bankAccountId: UUID,
-  val currentBalanceInEuroCent: Int
+  val currentBalanceInEuroCent: Int,
+  val lastModification: Instant,
+  val version: Long
 ) {
 
-  constructor(evt: BankAccountCreatedEvent) : this(
+  @MessageHandler
+  constructor(evt: BankAccountCreatedEvent, @Timestamp messageTimestamp: Instant, @SequenceNumber version: Long) : this(
     bankAccountId = evt.bankAccountId,
-    currentBalanceInEuroCent = 0
+    currentBalanceInEuroCent = 0,
+    lastModification = messageTimestamp,
+    version = version,
   )
 
-  fun on(evt: MoneyDepositedEvent): CurrentBalanceImmutableModel = copy(
-    currentBalanceInEuroCent = this.currentBalanceInEuroCent + evt.amountInEuroCent
+  @EventHandler
+  fun on(evt: MoneyDepositedEvent, @Timestamp messageTimestamp: Instant, @SequenceNumber version: Long): CurrentBalanceImmutableModel = copy(
+    currentBalanceInEuroCent = this.currentBalanceInEuroCent + evt.amountInEuroCent,
+    lastModification = messageTimestamp,
+    version = version,
   )
 
-  fun on(evt: MoneyWithdrawnEvent): CurrentBalanceImmutableModel = copy(
-    currentBalanceInEuroCent = this.currentBalanceInEuroCent - evt.amountInEuroCent
+  @EventHandler
+  fun on(evt: MoneyWithdrawnEvent, @Timestamp messageTimestamp: Instant, @SequenceNumber version: Long): CurrentBalanceImmutableModel = copy(
+    currentBalanceInEuroCent = this.currentBalanceInEuroCent - evt.amountInEuroCent,
+    lastModification = messageTimestamp,
+    version = version,
   )
 }
 

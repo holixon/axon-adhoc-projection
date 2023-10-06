@@ -8,7 +8,7 @@ class EventApplier<T>(
 
   fun <E> applyEvent(model: T, event: DomainEventMessage<E>) : T {
     return modelInspector.findEventHandler(event.payloadType)
-      ?.execute(model, event)
-      ?:model
+      ?.handle(event, model) as T // assured in inspector that the only return allowed return type is model class
+      ?: model
   }
 }

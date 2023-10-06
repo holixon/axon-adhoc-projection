@@ -4,6 +4,7 @@ import mu.KLogging
 import org.axonframework.common.caching.Cache
 import org.axonframework.common.caching.Cache.EntryListenerAdapter
 import org.axonframework.common.caching.NoCache
+import org.axonframework.eventsourcing.eventstore.DomainEventStream
 import org.axonframework.eventsourcing.eventstore.EventStore
 import java.util.Optional
 
@@ -48,7 +49,7 @@ open class ModelRepository<T : Any>(
       return null
     }
 
-    var model: T = modelFactory.createInstance(events.next().payload)
+    var model: T = modelFactory.createInstanceFromStream(events)
 
     var lastSeqNo = 0L
     events.forEachRemaining { event ->
@@ -59,6 +60,7 @@ open class ModelRepository<T : Any>(
 
     return CacheEntry(aggregateId, lastSeqNo, model)
   }
+
 
   internal fun readAndUpdateModelFromCache(aggregateId: String) : T {
     val currentCacheEntry = cache.get<String, CacheEntry<T>>(aggregateId)

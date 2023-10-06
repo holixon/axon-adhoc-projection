@@ -30,6 +30,7 @@ class ModelRepositoryITest {
 
     Assertions.assertThat(model).isPresent
     Assertions.assertThat(model.get().currentBalanceInEuroCent).isEqualTo(50)
+    Assertions.assertThat(model.get().version).isEqualTo(2)
   }
 
   private fun <T> publishMessage(aggregateId: String, evt: T) {
