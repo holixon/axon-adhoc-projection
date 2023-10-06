@@ -1,0 +1,14 @@
+package io.holixon.axon.selectivereplay
+
+import org.axonframework.eventhandling.DomainEventMessage
+
+class EventApplier<T>(
+  private val modelInspector: ModelInspector<T>
+) {
+
+  fun <E> applyEvent(model: T, event: DomainEventMessage<E>) : T {
+    return modelInspector.findEventHandler(event.payloadType)
+      ?.execute(model, event)
+      ?:model
+  }
+}

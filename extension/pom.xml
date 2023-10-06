@@ -4,13 +4,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>BASE_GROUP_ID._</groupId>
-    <artifactId>BASE_ARTIFACT_ID_</artifactId>
+    <groupId>io.holixon.axon.selectivereplay</groupId>
+    <artifactId>axon-selective-replay-root</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
-  <artifactId>extension</artifactId>
-  <name>BASE_ARTIFACT_ID-extension-root</name>
+  <artifactId>axon-selective-replay-extension</artifactId>
+  <name>${project.artifactId}</name>
   <description>Parent of extension modules</description>
   <packaging>pom</packaging>
 

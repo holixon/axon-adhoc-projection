@@ -4,14 +4,14 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>BASE_GROUP_ID._</groupId>
-    <artifactId>BASE_ARTIFACT_ID_</artifactId>
+    <groupId>io.holixon.axon.selectivereplay</groupId>
+    <artifactId>axon-selective-replay-root</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
-  <artifactId>examples</artifactId>
-  <name>BASE_ARTIFACT_ID-examples-root</name>
-  <description>Parent of example modules</description>
+  <artifactId>axon-selective-replay-examples-root</artifactId>
+  <name>${project.artifactId}</name>
+  <description>Examples for using the library</description>
   <packaging>pom</packaging>
 
   <properties>

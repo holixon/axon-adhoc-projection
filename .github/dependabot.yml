@@ -1,0 +1,19 @@
+version: 2
+updates:
+- package-ecosystem: maven
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: org.axonframework:axon-test
+    versions:
+    - "4.5"
+  - dependency-name: org.axonframework:axon-configuration
+    versions:
+    - "4.5"
+  - dependency-name: io.holixon.axon:axon-framework-bom
+    versions:
+    - "4.5"
+  labels: [ "Type: dependencies" ]
+  
