@@ -1,6 +1,6 @@
 package io.holixon.axon.selectivereplay.dummy
 
-import java.util.UUID
+import java.util.*
 
 data class BankAccountCreatedEvent(
   val bankAccountId: UUID,

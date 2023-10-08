@@ -15,7 +15,7 @@ open class ModelRepository<T : Any>(
   companion object : KLogging()
 
   init {
-    cache.registerCacheEntryListener(CacheEntryListener(clazz.simpleName))
+    cache.registerCacheEntryListener(LoggingCacheEntryListener(clazz.simpleName))
   }
 
   private val modelInspector = ModelInspector(clazz)
@@ -86,7 +86,7 @@ open class ModelRepository<T : Any>(
     return newCacheEntry.model
   }
 
-  internal class CacheEntryListener(
+  internal class LoggingCacheEntryListener(
     private val cacheName: String
   ) : EntryListenerAdapter() {
     companion object: KLogging()

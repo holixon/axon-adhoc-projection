@@ -16,7 +16,8 @@
 
   <properties>
     <!-- JVM -->
-    <java.version>11</java.version>
+    <kotlin.compiler.jvmTarget>17</kotlin.compiler.jvmTarget>
+    <java.version>17</java.version>
     <kotlin.version>1.9.10</kotlin.version>
 
     <!-- LIBS -->
@@ -33,6 +34,7 @@
     <dom4j.version>2.1.4</dom4j.version>
     <jaxen.version>2.0.0</jaxen.version>
     <assertj.version>3.24.2</assertj.version>
+    <mockk.version>1.13.8</mockk.version>
 
     <!-- MAVEN -->
     <project.encoding>UTF-8</project.encoding>
