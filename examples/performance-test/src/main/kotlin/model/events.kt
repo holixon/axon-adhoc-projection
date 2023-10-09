@@ -1,4 +1,4 @@
-package io.holixon.selectivereplay.dummy
+package io.holixon.selectivereplay.model
 
 import java.util.*
 

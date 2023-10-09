@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>io.holixon.axon.selectivereplay</groupId>
+  <groupId>io.holixon.selectivereplay</groupId>
   <artifactId>axon-selective-replay-root</artifactId>
   <name>axon-selective-replay-root</name>
   <version>0.0.1-SNAPSHOT</version>
@@ -159,7 +159,7 @@
               <plugin>all-open</plugin>
             </compilerPlugins>
             <pluginOptions>
-              <option>all-open:annotation=io.holixon.axon.testing.jgiven.AxonJGivenStage</option>
+              <option>all-open:annotation=io.holixon.testing.jgiven.AxonJGivenStage</option>
             </pluginOptions>
           </configuration>
           <executions>

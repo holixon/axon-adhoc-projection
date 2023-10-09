@@ -1,6 +1,3 @@
-package io.holixon.selectivereplay
-
-
 import io.holixon.selectivereplay.ModelFactory
 import io.holixon.selectivereplay.ModelInspector
 import io.holixon.selectivereplay.dummy.BankAccountCreatedEvent

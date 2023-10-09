@@ -1,4 +1,4 @@
-package io.holixon.axon.selectivereplay
+package io.holixon.selectivereplay
 
 import mu.KLogging
 import org.axonframework.common.caching.Cache

@@ -1,4 +1,4 @@
-package io.holixon.axon.selectivereplay
+package io.holixon.selectivereplay
 
 import java.lang.reflect.Method
 

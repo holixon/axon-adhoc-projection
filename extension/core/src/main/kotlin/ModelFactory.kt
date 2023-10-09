@@ -1,4 +1,4 @@
-package io.holixon.axon.selectivereplay
+package io.holixon.selectivereplay
 
 import org.axonframework.eventhandling.DomainEventMessage
 import org.axonframework.eventsourcing.eventstore.DomainEventStream

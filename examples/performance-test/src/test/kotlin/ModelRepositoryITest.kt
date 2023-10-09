@@ -1,10 +1,7 @@
-package io.holixon.selectivereplay
-
 import io.holixon.selectivereplay.dummy.*
 import org.assertj.core.api.Assertions
 import org.axonframework.eventhandling.GenericDomainEventMessage
 import org.axonframework.eventsourcing.eventstore.EventStore
-
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest

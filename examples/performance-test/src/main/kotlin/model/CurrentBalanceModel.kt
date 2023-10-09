@@ -1,16 +1,18 @@
-package io.holixon.selectivereplay.dummy
+package io.holixon.selectivereplay.model
 
 import io.holixon.selectivereplay.ModelRepository
+import org.axonframework.common.caching.NoCache
 import org.axonframework.common.caching.WeakReferenceCache
 import org.axonframework.eventhandling.EventHandler
 import org.axonframework.eventhandling.SequenceNumber
 import org.axonframework.eventhandling.Timestamp
 import org.axonframework.eventsourcing.eventstore.EventStore
 import org.axonframework.messaging.annotation.MessageHandler
+import org.springframework.stereotype.Component
 import java.time.Instant
 import java.util.*
 
-data class CurrentBalanceImmutableModel(
+data class CurrentBalanceModel(
   val bankAccountId: UUID,
   val currentBalanceInEuroCent: Int,
   val lastModification: Instant,
@@ -26,19 +28,20 @@ data class CurrentBalanceImmutableModel(
   )
 
   @EventHandler
-  fun on(evt: MoneyDepositedEvent, @Timestamp messageTimestamp: Instant, @SequenceNumber version: Long): CurrentBalanceImmutableModel = copy(
+  fun on(evt: MoneyDepositedEvent, @Timestamp messageTimestamp: Instant, @SequenceNumber version: Long): CurrentBalanceModel = copy(
     currentBalanceInEuroCent = this.currentBalanceInEuroCent + evt.amountInEuroCent,
     lastModification = messageTimestamp,
     version = version,
   )
 
   @EventHandler
-  fun on(evt: MoneyWithdrawnEvent, @Timestamp messageTimestamp: Instant, @SequenceNumber version: Long): CurrentBalanceImmutableModel = copy(
+  fun on(evt: MoneyWithdrawnEvent, @Timestamp messageTimestamp: Instant, @SequenceNumber version: Long): CurrentBalanceModel = copy(
     currentBalanceInEuroCent = this.currentBalanceInEuroCent - evt.amountInEuroCent,
     lastModification = messageTimestamp,
     version = version,
   )
 }
 
-class CurrentBalanceImmutableModelRepository(eventStore: EventStore) :
-  ModelRepository<CurrentBalanceImmutableModel>(eventStore, CurrentBalanceImmutableModel::class.java, WeakReferenceCache())
+@Component
+class CurrentBalanceModelRepository(eventStore: EventStore) :
+  ModelRepository<CurrentBalanceModel>(eventStore, CurrentBalanceModel::class.java, NoCache.INSTANCE)
