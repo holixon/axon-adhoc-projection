@@ -1,3 +1,3 @@
 # BASE_ARTIFACT_ID
 
-Template for camunda extension repository
+Cool Template for camunda extension repository
