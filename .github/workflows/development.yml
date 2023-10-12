@@ -2,10 +2,10 @@ name: Development branches
 
 on:
   push:
-    branches-ignore:
-      - 'master'
     branches:
+      - '!master'
       - '**'
+
 jobs:
   build:
     runs-on: ubuntu-latest
