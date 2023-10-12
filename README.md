@@ -7,6 +7,8 @@
 
 This library provides a stateless model repository for Axon Framework using selective event replay executed during query.  
 
+## Usage
+
 
 ## License
 
