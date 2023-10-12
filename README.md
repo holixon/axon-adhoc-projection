@@ -19,5 +19,3 @@ This library is developed under
 ## Sponsors and Customers
 
 [![sponsored](https://img.shields.io/badge/sponsoredBy-Holisticon-red.svg)](https://holisticon.de/)
-
-
