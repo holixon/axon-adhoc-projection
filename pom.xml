@@ -12,7 +12,7 @@
 
   <modules>
     <module>extension</module>
-    <!-- examples added via profiles -->
+    <!-- examples added via profiles, see the profile section below-->
   </modules>
 
   <properties>
@@ -596,9 +596,6 @@
       </roles>
     </developer>
   </developers>
-  <!--
-  Profile creating all artifacts: JARs, POMs, Sources, JavaDoc and all signatures.
-  -->
 
   <!-- License Stuff -->
   <inceptionYear>2023</inceptionYear>
