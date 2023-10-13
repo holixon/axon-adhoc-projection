@@ -1,8 +1,6 @@
 package io.holixon.selectivereplay
 
 
-import io.holixon.selectivereplay.ModelFactory
-import io.holixon.selectivereplay.ModelInspector
 import io.holixon.selectivereplay.dummy.BankAccountCreatedEvent
 import io.holixon.selectivereplay.dummy.CurrentBalanceImmutableModel
 import io.holixon.selectivereplay.dummy.CurrentBalanceMutableModel

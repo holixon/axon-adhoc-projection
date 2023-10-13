@@ -2,8 +2,6 @@ package io.holixon.selectivereplay.model
 
 import io.holixon.selectivereplay.ModelRepository
 import org.axonframework.common.caching.NoCache
-import org.axonframework.common.caching.WeakReferenceCache
-import org.axonframework.eventhandling.EventHandler
 import org.axonframework.eventhandling.SequenceNumber
 import org.axonframework.eventhandling.Timestamp
 import org.axonframework.eventsourcing.eventstore.EventStore
@@ -27,14 +25,14 @@ data class CurrentBalanceModel(
     version = version,
   )
 
-  @EventHandler
+  @MessageHandler
   fun on(evt: MoneyDepositedEvent, @Timestamp messageTimestamp: Instant, @SequenceNumber version: Long): CurrentBalanceModel = copy(
     currentBalanceInEuroCent = this.currentBalanceInEuroCent + evt.amountInEuroCent,
     lastModification = messageTimestamp,
     version = version,
   )
 
-  @EventHandler
+  @MessageHandler
   fun on(evt: MoneyWithdrawnEvent, @Timestamp messageTimestamp: Instant, @SequenceNumber version: Long): CurrentBalanceModel = copy(
     currentBalanceInEuroCent = this.currentBalanceInEuroCent - evt.amountInEuroCent,
     lastModification = messageTimestamp,
