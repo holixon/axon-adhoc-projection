@@ -1,6 +1,6 @@
-package io.holixon.selectivereplay.dummy
+package io.holixon.axon.projection.adhoc.dummy
 
-import io.holixon.selectivereplay.ModelRepository
+import io.holixon.axon.projection.adhoc.ModelRepository
 import org.axonframework.common.caching.WeakReferenceCache
 import org.axonframework.eventhandling.EventHandler
 import org.axonframework.eventhandling.SequenceNumber
@@ -26,18 +26,20 @@ data class CurrentBalanceImmutableModel(
   )
 
   @EventHandler
-  fun on(evt: MoneyDepositedEvent, @Timestamp messageTimestamp: Instant, @SequenceNumber version: Long): CurrentBalanceImmutableModel = copy(
-    currentBalanceInEuroCent = this.currentBalanceInEuroCent + evt.amountInEuroCent,
-    lastModification = messageTimestamp,
-    version = version,
-  )
+  fun on(evt: MoneyDepositedEvent, @Timestamp messageTimestamp: Instant, @SequenceNumber version: Long): CurrentBalanceImmutableModel =
+    copy(
+      currentBalanceInEuroCent = this.currentBalanceInEuroCent + evt.amountInEuroCent,
+      lastModification = messageTimestamp,
+      version = version,
+    )
 
   @EventHandler
-  fun on(evt: MoneyWithdrawnEvent, @Timestamp messageTimestamp: Instant, @SequenceNumber version: Long): CurrentBalanceImmutableModel = copy(
-    currentBalanceInEuroCent = this.currentBalanceInEuroCent - evt.amountInEuroCent,
-    lastModification = messageTimestamp,
-    version = version,
-  )
+  fun on(evt: MoneyWithdrawnEvent, @Timestamp messageTimestamp: Instant, @SequenceNumber version: Long): CurrentBalanceImmutableModel =
+    copy(
+      currentBalanceInEuroCent = this.currentBalanceInEuroCent - evt.amountInEuroCent,
+      lastModification = messageTimestamp,
+      version = version,
+    )
 }
 
 class CurrentBalanceImmutableModelRepository(eventStore: EventStore) :

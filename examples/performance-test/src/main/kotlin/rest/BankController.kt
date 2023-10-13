@@ -1,7 +1,7 @@
-package io.holixon.selectivereplay.rest
+package io.holixon.axon.projection.adhoc.rest
 
-import io.holixon.selectivereplay.model.CurrentBalanceModel
-import io.holixon.selectivereplay.model.CurrentBalanceModelRepository
+import io.holixon.axon.projection.adhoc.model.CurrentBalanceModel
+import io.holixon.axon.projection.adhoc.model.CurrentBalanceModelRepository
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

@@ -1,4 +1,4 @@
-package io.holixon.selectivereplay.dummy
+package io.holixon.axon.projection.adhoc.dummy
 
 import java.util.*
 

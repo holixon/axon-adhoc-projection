@@ -1,6 +1,6 @@
-package io.holixon.selectivereplay.model
+package io.holixon.axon.projection.adhoc.model
 
-import io.holixon.selectivereplay.ModelRepository
+import io.holixon.axon.projection.adhoc.ModelRepository
 import org.axonframework.common.caching.NoCache
 import org.axonframework.eventhandling.SequenceNumber
 import org.axonframework.eventhandling.Timestamp

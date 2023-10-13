@@ -1,10 +1,12 @@
-package io.holixon.selectivereplay
+package io.holixon.axon.projection.adhoc
 
 
-import io.holixon.selectivereplay.dummy.BankAccountCreatedEvent
-import io.holixon.selectivereplay.dummy.CurrentBalanceImmutableModel
-import io.holixon.selectivereplay.dummy.CurrentBalanceMutableModel
-import io.holixon.selectivereplay.dummy.MoneyDepositedEvent
+import io.holixon.axon.projection.adhoc.dummy.BankAccountCreatedEvent
+import io.holixon.axon.projection.adhoc.dummy.CurrentBalanceImmutableModel
+import io.holixon.axon.projection.adhoc.dummy.CurrentBalanceMutableModel
+import io.holixon.axon.projection.adhoc.dummy.MoneyDepositedEvent
+import io.holixon.axon.projection.adhoc.ModelFactory
+import io.holixon.axon.projection.adhoc.ModelInspector
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify

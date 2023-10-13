@@ -16,7 +16,7 @@ To use the extension, simply include the artifact in your POM:
 
 ```xml
     <dependency>
-      <groupId>io.holixon.selectivereplay</groupId>
+      <groupId>io.holixon.axon.projection.adhoc</groupId>
       <artifactId>axon-selective-replay-core</artifactId>
       <version>0.0.1</version>
     </dependency>

@@ -4,12 +4,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>io.holixon.selectivereplay</groupId>
-    <artifactId>axon-selective-replay-root</artifactId>
+    <groupId>io.holixon.axon</groupId>
+    <artifactId>axon-adhoc-projection-root</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
-  <artifactId>axon-selective-replay-extension</artifactId>
+  <artifactId>axon-adhoc-projection-extension</artifactId>
   <name>${project.artifactId}</name>
   <description>Parent of extension modules</description>
   <packaging>pom</packaging>
@@ -20,37 +20,13 @@
 
   <properties>
     <jacoco.skip>false</jacoco.skip>
+    <dokka.skip>false</dokka.skip>
+    <maven.javadoc.skip>false</maven.javadoc.skip>
+    <maven.sources.skip>false</maven.sources.skip>
   </properties>
-
-  <dependencies>
-    <dependency>
-      <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>kotlin-stdlib-jdk8</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>kotlin-reflect</artifactId>
-    </dependency>
-  </dependencies>
 
   <build>
     <plugins>
-      <!-- JGiven Reports -->
-      <plugin>
-        <groupId>com.tngtech.jgiven</groupId>
-        <artifactId>jgiven-maven-plugin</artifactId>
-        <version>${jgiven.version}</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>report</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <format>html</format>
-        </configuration>
-      </plugin>
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
