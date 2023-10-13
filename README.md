@@ -1,14 +1,13 @@
 # Axon Selective Replay
 
 [![stable](https://img.shields.io/badge/lifecycle-STABLE-green.svg)](https://github.com/holisticon#open-source-lifecycle)
-[![Build Status](https://github.com/holixon/axon-selective-replay/workflows/Development%20branches/badge.svg)](https://github.com/holixon/axon-selective-replay/actions)
+[![Build Status](https://github.com/holixon/axon-adhoc-projection/workflows/Development%20branches/badge.svg)](https://github.com/holixon/axon-adhoc-projection/actions)
 [![sponsored](https://img.shields.io/badge/sponsoredBy-Holisticon-RED.svg)](https://holisticon.de/)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.holixon.axon.axon-selective-replay/axon-selective-replay/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.holixon.axon.axon-selective-replay/axon-axon-selective-replay)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.holixon.axon/axon-adhoc-projection/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.holixon.axon/axon-adhoc-projection)
 
 This library provides a stateless model repository for Axon Framework using selective event replay executed during query. 
-The advantage is, that one does not need a TrackingEventProcessor, TokenStore or other kind of persistence other than the Axonserver itself. 
-The ModelRepository directly accesses the event store and constructs the model on the fly by applying the events directly to
-the model.
+The advantage is, that one does not need a `TrackingEventProcessor`, `TokenStore`  or other kind of persistence other than the Axon Server itself. 
+The `ModelRepository` directly accesses the event store and constructs the model on the fly by applying the events directly to the model.
 
 ## Usage
 
@@ -16,8 +15,8 @@ To use the extension, simply include the artifact in your POM:
 
 ```xml
     <dependency>
-      <groupId>io.holixon.selectivereplay</groupId>
-      <artifactId>axon-selective-replay-core</artifactId>
+      <groupId>io.holixon.axon</groupId>
+      <artifactId>axon-adhoc-projection-core</artifactId>
       <version>0.0.1</version>
     </dependency>
 ```

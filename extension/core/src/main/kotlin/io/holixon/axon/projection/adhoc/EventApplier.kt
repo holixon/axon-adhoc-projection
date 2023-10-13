@@ -1,4 +1,4 @@
-package io.holixon.selectivereplay
+package io.holixon.axon.projection.adhoc
 
 import org.axonframework.eventhandling.DomainEventMessage
 

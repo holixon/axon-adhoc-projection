@@ -1,8 +1,8 @@
-package io.holixon.selectivereplay.rest
+package io.holixon.axon.projection.adhoc.rest
 
-import io.holixon.selectivereplay.model.BankAccountCreatedEvent
-import io.holixon.selectivereplay.model.MoneyDepositedEvent
-import io.holixon.selectivereplay.model.MoneyWithdrawnEvent
+import io.holixon.axon.projection.adhoc.model.BankAccountCreatedEvent
+import io.holixon.axon.projection.adhoc.model.MoneyDepositedEvent
+import io.holixon.axon.projection.adhoc.model.MoneyWithdrawnEvent
 import mu.KLogging
 import org.axonframework.eventhandling.DomainEventMessage
 import org.axonframework.eventhandling.GenericDomainEventMessage

@@ -1,6 +1,6 @@
-package io.holixon.selectivereplay
+package io.holixon.axon.projection.adhoc
 
-import io.holixon.selectivereplay.dummy.*
+import io.holixon.axon.projection.adhoc.dummy.*
 import org.assertj.core.api.Assertions
 import org.axonframework.eventhandling.GenericDomainEventMessage
 import org.axonframework.eventsourcing.eventstore.EventStore
@@ -15,7 +15,8 @@ import java.util.*
 @ActiveProfiles("itest")
 class ModelRepositoryITest {
 
-  @Autowired lateinit var eventStore: EventStore
+  @Autowired
+  lateinit var eventStore: EventStore
 
   @Test
   fun `immutable projection can be loaded`() {

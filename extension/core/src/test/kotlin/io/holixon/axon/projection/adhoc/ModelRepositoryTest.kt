@@ -1,8 +1,8 @@
-package io.holixon.selectivereplay
+package io.holixon.axon.projection.adhoc
 
-import io.holixon.selectivereplay.dummy.BankAccountCreatedEvent
-import io.holixon.selectivereplay.dummy.CurrentBalanceImmutableModel
-import io.holixon.selectivereplay.dummy.MoneyDepositedEvent
+import io.holixon.axon.projection.adhoc.dummy.BankAccountCreatedEvent
+import io.holixon.axon.projection.adhoc.dummy.CurrentBalanceImmutableModel
+import io.holixon.axon.projection.adhoc.dummy.MoneyDepositedEvent
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -66,18 +66,18 @@ class ModelRepositoryTest {
     )
     every { cache.containsKey(eq(bankAccountId.toString())) } returns true
     every { cache.get<String, CacheEntry<CurrentBalanceImmutableModel>>(eq(bankAccountId.toString())) } returns
-            CacheEntry(
-              bankAccountId.toString(),
-              0,
-              CurrentBalanceImmutableModel(BankAccountCreatedEvent(bankAccountId, "Alice"), Instant.now(), 0)
-            )
+      CacheEntry(
+        bankAccountId.toString(),
+        0,
+        CurrentBalanceImmutableModel(BankAccountCreatedEvent(bankAccountId, "Alice"), Instant.now(), 0)
+      )
 
     val model = repository.findById(bankAccountId.toString())
 
     assertThat(model).isPresent
 
     verify { eventStore.lastSequenceNumberFor(eq(bankAccountId.toString())) }
-    verify (exactly = 0) { eventStore.readEvents(eq(bankAccountId.toString()), any()) }
+    verify(exactly = 0) { eventStore.readEvents(eq(bankAccountId.toString()), any()) }
     verify { cache.containsKey(eq(bankAccountId.toString())) }
     verify { cache.get(eq(bankAccountId.toString())) }
   }
@@ -93,11 +93,11 @@ class ModelRepositoryTest {
     )
     every { cache.containsKey(eq(bankAccountId.toString())) } returns true
     every { cache.get<String, CacheEntry<CurrentBalanceImmutableModel>>(eq(bankAccountId.toString())) } returns
-            CacheEntry(
-              bankAccountId.toString(),
-              0,
-              CurrentBalanceImmutableModel(BankAccountCreatedEvent(bankAccountId, "Alice"), Instant.now(), 0)
-            )
+      CacheEntry(
+        bankAccountId.toString(),
+        0,
+        CurrentBalanceImmutableModel(BankAccountCreatedEvent(bankAccountId, "Alice"), Instant.now(), 0)
+      )
 
     val model = repository.findById(bankAccountId.toString())
 
@@ -105,7 +105,7 @@ class ModelRepositoryTest {
     assertThat(model.get().version).isEqualTo(1L)
 
     verify { eventStore.lastSequenceNumberFor(eq(bankAccountId.toString())) }
-    verify (exactly = 0) { eventStore.readEvents(eq(bankAccountId.toString())) }
+    verify(exactly = 0) { eventStore.readEvents(eq(bankAccountId.toString())) }
     verify { cache.containsKey(eq(bankAccountId.toString())) }
     verify { cache.get(eq(bankAccountId.toString())) }
   }

@@ -1,6 +1,6 @@
-package io.holixon.selectivereplay
+package io.holixon.axon.projection.adhoc
 
-import io.holixon.selectivereplay.dummy.*
+import io.holixon.axon.projection.adhoc.dummy.*
 import org.assertj.core.api.Assertions.assertThat
 import org.axonframework.eventhandling.EventHandler
 import org.axonframework.eventhandling.SequenceNumber
