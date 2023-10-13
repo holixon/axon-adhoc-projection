@@ -28,7 +28,7 @@
     <kotlin-logging.version>3.0.5</kotlin-logging.version>
 
     <!-- TEST -->
-    <jackson.version>2.15.2</jackson.version>
+    <jackson.version>2.15.3</jackson.version>
     <junit.version>4.13.2</junit.version>
     <junit5.version>5.10.0</junit5.version>
     <dom4j.version>2.1.4</dom4j.version>
