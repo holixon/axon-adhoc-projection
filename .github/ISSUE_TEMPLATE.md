@@ -1,3 +1,3 @@
 Please use one of the following templates:
 
-https://github.com/holixon/axon-selective-replay/issues/new/choose
+https://github.com/holixon/axon-adhoc-projection/issues/new/choose
