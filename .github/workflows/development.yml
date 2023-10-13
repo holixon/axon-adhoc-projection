@@ -3,8 +3,8 @@ name: Development branches
 on:
   push:
     branches:
-      - '!master'
       - '**'
+      - '!master'
 
 jobs:
   build:
