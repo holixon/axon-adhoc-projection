@@ -1,6 +1,6 @@
 ---
 name: 'Enhancement request'
-about: 'Suggest an enhancement to an existing feature for Axon Testing'
+about: 'Suggest an enhancement to an existing feature for Adhoc Projection'
 title:
 labels: 'type: enhancement'
 

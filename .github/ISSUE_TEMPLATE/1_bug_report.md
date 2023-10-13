@@ -1,6 +1,6 @@
 ---
 name: 'Bug report'
-about: 'Report a bug in Axon Testing'
+about: 'Report a bug in Axon Adhoc Projection'
 title:
 labels: 'type: bug :bug:'
 assignees: 

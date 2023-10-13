@@ -1,6 +1,6 @@
 ---
 name: 'Feature request'
-about: 'Suggest a feature for Axon Testing'
+about: 'Suggest a feature for Adhoc Projection'
 title:
 labels: 'type: feature'
 
