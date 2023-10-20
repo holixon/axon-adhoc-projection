@@ -54,15 +54,15 @@ data class CurrentBalanceModel(
 The plugin scans for any `@MessageHandler annotation on either constructors or methods.
 
 **Constructors:**
-- the model class must have either a default constructor or an annotated constructor accepting the first event of the event stream
+  - the model class must have either a default constructor or an annotated constructor accepting the first event of the event stream
 
 **Event handlers:**
-- methods which are annotated with `@MessageHandler` (or `@EventHandler` - works too) are considered to be able to handle events from the event stream
-- the parameter signature is the same as for regular EventHandler methods, you can use annotations like `@SequenceNumber`, `@Timestamp` etc.
-- there are only two allowed return types:
-  - void: the model class will be treated as mutable class and the next event will be applied to the same instance
-  - model class type: the model will be treated as immutable and the next event will be applied to the returned instance
-- if an incoming event has no matching event handler, the event will simply be ignored
+  - methods which are annotated with `@MessageHandler` (or `@EventHandler` - works too) are considered to be able to handle events from the event stream
+  - the parameter signature is the same as for regular EventHandler methods, you can use annotations like `@SequenceNumber`, `@Timestamp` etc.
+  - there are only two allowed return types:
+    - void: the model class will be treated as mutable class and the next event will be applied to the same instance
+    - model class type: the model will be treated as immutable and the next event will be applied to the returned instance
+  - if an incoming event has no matching event handler, the event will simply be ignored
 
 Then define a repository extending from `ModelRepository` class
 
