@@ -19,7 +19,7 @@ import java.util.*
 open class ModelRepository<T : Any>(
   private val eventStore: EventStore,
   private val modelClass: Class<T>,
-  private val cache: Cache = NoCache.INSTANCE
+  protected val cache: Cache = NoCache.INSTANCE
 ) {
   companion object : KLogging()
 
@@ -29,7 +29,7 @@ open class ModelRepository<T : Any>(
 
   private val modelInspector = ModelInspector(modelClass)
   private val modelFactory = ModelFactory(modelInspector)
-  private val eventApplier = EventApplier(modelInspector)
+  protected val eventApplier = EventApplier(modelInspector)
 
   /**
    * Looks for all events of this aggregateId and constructs a model instance. If a cached version exists, only the remaining new events
@@ -46,8 +46,8 @@ open class ModelRepository<T : Any>(
     }
   }
 
-  internal fun readModelFromScratch(aggregateId: String): Optional<T> {
-    val cacheEntry = createCacheEntryFromScratch(aggregateId)
+  internal fun readModelFromScratch(aggregateId: String, seqNo: Long = Long.MAX_VALUE): Optional<T> {
+    val cacheEntry = createCacheEntryFromScratch(aggregateId, seqNo)
 
     return if (cacheEntry != null) {
       cache.put(aggregateId, cacheEntry)
@@ -57,7 +57,7 @@ open class ModelRepository<T : Any>(
     }
   }
 
-  internal fun createCacheEntryFromScratch(aggregateId: String): CacheEntry<T>? {
+  internal fun createCacheEntryFromScratch(aggregateId: String, seqNo: Long = Long.MAX_VALUE): CacheEntry<T>? {
     logger.debug { "Reading model for ${modelClass.simpleName} with ID $aggregateId from scratch" }
     val events = eventStore.readEvents(aggregateId)
     if (!events.hasNext()) {
@@ -67,7 +67,9 @@ open class ModelRepository<T : Any>(
     var model: T = modelFactory.createInstanceFromStream(events)
 
     var lastSeqNo = 0L
-    events.forEachRemaining { event ->
+    events
+      .filter { it.sequenceNumber <= seqNo }
+      .forEachRemaining { event ->
       logger.debug { "Reading event ${event.payloadType.simpleName} with seqNo ${event.sequenceNumber} for aggregate ID $aggregateId" }
       lastSeqNo = event.sequenceNumber
       model = eventApplier.applyEvent(model, event)
@@ -77,7 +79,7 @@ open class ModelRepository<T : Any>(
   }
 
 
-  internal fun readAndUpdateModelFromCache(aggregateId: String): T {
+  internal fun readAndUpdateModelFromCache(aggregateId: String, seqNo: Long = Long.MAX_VALUE): T {
     val currentCacheEntry = cache.get<String, CacheEntry<T>>(aggregateId)
     logger.debug { "Reading cached model for ${modelClass.simpleName} with ID $aggregateId and seqNo ${currentCacheEntry.seqNo}" }
 
@@ -91,7 +93,9 @@ open class ModelRepository<T : Any>(
 
     val events = eventStore.readEvents(aggregateId, currentCacheEntry.seqNo + 1)
 
-    events.forEachRemaining { event ->
+    events
+      .filter { it.sequenceNumber <= seqNo }
+      .forEachRemaining { event ->
       logger.debug { "Reading event ${event.payloadType.simpleName} with seqNo ${event.sequenceNumber} for aggregate ID $aggregateId" }
       model = eventApplier.applyEvent(model, event)
     }

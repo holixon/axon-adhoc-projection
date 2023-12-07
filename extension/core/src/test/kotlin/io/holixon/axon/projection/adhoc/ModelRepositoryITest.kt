@@ -1,5 +1,6 @@
 package io.holixon.axon.projection.adhoc
 
+import io.holixon.axon.projection.adhoc._itestbase.BaseSpringIntegrationTest
 import io.holixon.axon.projection.adhoc.dummy.*
 import org.assertj.core.api.Assertions
 import org.axonframework.eventhandling.GenericDomainEventMessage
@@ -11,12 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import java.util.*
 
-@SpringBootTest(classes = [TestConfiguration::class])
-@ActiveProfiles("itest")
-class ModelRepositoryITest {
-
-  @Autowired
-  lateinit var eventStore: EventStore
+class ModelRepositoryITest : BaseSpringIntegrationTest() {
 
   @Test
   fun `immutable projection can be loaded`() {
@@ -57,12 +53,5 @@ class ModelRepositoryITest {
     Assertions.assertThat(secondModel).isPresent
     Assertions.assertThat(secondModel.get().currentBalanceInEuroCent).isEqualTo(110)
     Assertions.assertThat(secondModel.get().version).isEqualTo(4)
-  }
-
-  private fun <T> publishMessage(aggregateId: String, evt: T) {
-    val lastSeqNo = eventStore.lastSequenceNumberFor(aggregateId).orElse(-1)
-
-    eventStore.publish(GenericDomainEventMessage(evt!!::class.java.typeName, aggregateId, lastSeqNo + 1, evt))
-
   }
 }
