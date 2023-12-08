@@ -9,6 +9,21 @@ import org.axonframework.eventhandling.EventMessage
 import org.axonframework.eventsourcing.eventstore.EventStore
 import org.axonframework.messaging.annotation.MessageHandler
 
+/**
+ * Enhancement class for ModelRepository. The UpdatingModelRepository adds a tracking event processor
+ * which is able to update existing cache entries with a received event so all cached entries are always up-to-date.
+ *
+ * Usage: The UpdatingModelRepository must be registered as an EventHandler component to the application.
+ * The processor usually should start at the head of the stream or have a persisted token.
+ *
+ * With the parameter <code>forceCacheInsert</code> the repository will force a full and up-to-date cache
+ * entry creation for events where there is no cache entry.
+ *
+ * @param eventStore the axon eventStore to use
+ * @param modelClass the model class type to build the projection on
+ * @param cache the cache to use
+ * @param forceCacheInsert forces cache insert when model is absent
+ */
 open class UpdatingModelRepository<T : Any>(
   eventStore: EventStore,
   modelClass: Class<T>,
@@ -20,16 +35,29 @@ open class UpdatingModelRepository<T : Any>(
 
   private var modelUpdatedListeners: MutableList<ModelUpdatedListener<T>> = mutableListOf()
 
+  /**
+   * Adds a listener to the repository firing every time a cached instance was created or changed
+   *
+   * @param listener the listener to add
+   */
   fun addModelUpdatedListener(listener: ModelUpdatedListener<T>) {
     modelUpdatedListeners.add(listener)
   }
 
+  /**
+   * Removes a previously added listener
+   *
+   * @param listener the listener to add
+   */
   fun removeModelUpdatedListener(listener: ModelUpdatedListener<T>) {
     modelUpdatedListeners.remove(listener)
   }
 
+  /*
+   * This eventHandler listens to every event on the stream and internally decides if it is relevant or not.
+   */
   @MessageHandler(messageType = DomainEventMessage::class)
-  fun on(eventMessage: DomainEventMessage<Any>) {
+  internal fun on(eventMessage: DomainEventMessage<Any>) {
     logger.debug { "Event ${eventMessage.payloadType} of aggregate ${eventMessage.aggregateIdentifier}" }
 
     val cacheEntry: CacheEntry<T>? = cache.get(eventMessage.aggregateIdentifier)
@@ -78,8 +106,17 @@ open class UpdatingModelRepository<T : Any>(
     modelUpdatedListeners.forEach { it.modelUpdated(model) }
   }
 
+  /**
+   * A listener to the repository firing every time a cached instance was created or changed
+   */
   @FunctionalInterface
   interface ModelUpdatedListener<T> {
+
+    /**
+     * Will be called with the new model instance every time the model instance is changed.
+     *
+     * @param model the new model instance
+     */
     fun modelUpdated(model: T)
   }
 }
