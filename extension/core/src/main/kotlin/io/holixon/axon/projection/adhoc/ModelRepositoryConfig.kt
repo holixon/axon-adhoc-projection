@@ -26,6 +26,9 @@ data class ModelRepositoryConfig(
   val forceCacheInsert: Boolean = false
 ) {
   companion object {
+    /**
+     * Returns a config with default settings.
+     */
     fun defaults() = ModelRepositoryConfig()
   }
 

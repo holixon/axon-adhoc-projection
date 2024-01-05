@@ -115,7 +115,7 @@ The `ModelRepository` and subclasses take a `ModelRepositoryConfig` object for m
 |------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------|
 | cache            | the cache implementation to use                                                                                                                                                                                                                 | LRUCache(1024) |
 | cacheRefreshTime | Time in ms a cache entry is considered up-to-date and no eventStore will be queried for new/missed events.<br/>When using the UpdatingModelRepository` consider a value other than 0 to use the advantage of the self-updating repo.            | 0 (ms)         |
-| forceCacheInsert | Just for UpdatingModelRepository - Configures the behavior when an event of an uncached entity is received.<br/>When *false* the event is ignored, when *true*, a full replay of this entity is performed and the result is added to the cache. | false          |
+| forceCacheInsert | Just for UpdatingModelRepository - Configures the behavior when an event of an uncached entity is received.<br/>When _false_ the event is ignored, when _true_, a full replay of this entity is performed and the result is added to the cache. | false          |
 
 ## License
 
