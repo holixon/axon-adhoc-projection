@@ -2,9 +2,9 @@ POST http://localhost:8080/data-generator/
 Content-Type: application/json
 
 {
-  "numAccounts": 100000,
-  "minInteractions": 200,
-  "maxInteractions": 400
+  "numAccounts": 100,
+  "minInteractions": 20,
+  "maxInteractions": 40
 }
 
 ###

@@ -1,7 +1,8 @@
 package io.holixon.axon.projection.adhoc.model
 
-import io.holixon.axon.projection.adhoc.ModelRepository
-import org.axonframework.common.caching.NoCache
+import io.holixon.axon.projection.adhoc.ModelRepositoryConfig
+import io.holixon.axon.projection.adhoc.UpdatingModelRepository
+import mu.KLogging
 import org.axonframework.eventhandling.SequenceNumber
 import org.axonframework.eventhandling.Timestamp
 import org.axonframework.eventsourcing.eventstore.EventStore
@@ -42,4 +43,13 @@ data class CurrentBalanceModel(
 
 @Component
 class CurrentBalanceModelRepository(eventStore: EventStore) :
-  ModelRepository<CurrentBalanceModel>(eventStore, CurrentBalanceModel::class.java, NoCache.INSTANCE)
+  UpdatingModelRepository<CurrentBalanceModel>(
+    eventStore,
+    CurrentBalanceModel::class.java,
+    ModelRepositoryConfig(forceCacheInsert = true)
+  ) {
+    companion object : KLogging()
+  init {
+    addModelUpdatedListener { logger.debug { "Updated ${it.bankAccountId}" } }
+  }
+}
