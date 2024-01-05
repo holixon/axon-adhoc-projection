@@ -21,15 +21,13 @@ import org.axonframework.messaging.annotation.MessageHandler
  *
  * @param eventStore the axon eventStore to use
  * @param modelClass the model class type to build the projection on
- * @param cache the cache to use
- * @param forceCacheInsert forces cache insert when model is absent
+ * @param config the repository config to apply
  */
 open class UpdatingModelRepository<T : Any>(
   eventStore: EventStore,
   modelClass: Class<T>,
-  cache: Cache = NoCache.INSTANCE,
-  private val forceCacheInsert: Boolean = false
-) : ModelRepository<T>(eventStore, modelClass, cache) {
+  config: ModelRepositoryConfig = ModelRepositoryConfig.defaults(),
+) : ModelRepository<T>(eventStore, modelClass, config) {
 
   companion object : KLogging()
 
@@ -64,7 +62,7 @@ open class UpdatingModelRepository<T : Any>(
 
     if (cacheEntry != null) {
       handleCacheEntry(eventMessage, cacheEntry)
-    } else if (forceCacheInsert) {
+    } else if (config.forceCacheInsert) {
       // create cache entry up to this event and store it
       logger.debug { "Aggregate ${eventMessage.aggregateIdentifier} was not found in eventStore, replay up to seqNo ${eventMessage.sequenceNumber} and store in cache" }
       readModelFromScratch(eventMessage.aggregateIdentifier, eventMessage.sequenceNumber)
@@ -110,7 +108,7 @@ open class UpdatingModelRepository<T : Any>(
    * A listener to the repository firing every time a cached instance was created or changed
    */
   @FunctionalInterface
-  interface ModelUpdatedListener<T> {
+  fun interface ModelUpdatedListener<T> {
 
     /**
      * Will be called with the new model instance every time the model instance is changed.

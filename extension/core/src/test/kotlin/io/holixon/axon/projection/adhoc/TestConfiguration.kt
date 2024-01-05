@@ -1,6 +1,5 @@
 package io.holixon.axon.projection.adhoc
 
-import io.holixon.axon.projection.adhoc._itestbase.LRUCache
 import io.holixon.axon.projection.adhoc.dummy.CurrentBalanceImmutableModel
 import org.axonframework.common.caching.Cache
 import org.axonframework.common.transaction.TransactionManager
@@ -53,9 +52,9 @@ class TestConfiguration {
 
   @Bean
   fun updatingCurrentBalanceModelRepository(eventStore: EventStore, @Qualifier("updateCache") cache: Cache) =
-    UpdatingModelRepository(eventStore, CurrentBalanceImmutableModel::class.java, cache, false)
+    UpdatingModelRepository(eventStore, CurrentBalanceImmutableModel::class.java, ModelRepositoryConfig(cache = cache))
 
   @Bean
   fun forceUpdatingCurrentBalanceModelRepository(eventStore: EventStore, @Qualifier("forceUpdateCache") cache: Cache) =
-    UpdatingModelRepository(eventStore, CurrentBalanceImmutableModel::class.java, cache, true)
+    UpdatingModelRepository(eventStore, CurrentBalanceImmutableModel::class.java, ModelRepositoryConfig(cache = cache, forceCacheInsert = true))
 }

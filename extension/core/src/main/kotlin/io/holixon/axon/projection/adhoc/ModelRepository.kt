@@ -5,42 +5,54 @@ import org.axonframework.common.caching.Cache
 import org.axonframework.common.caching.Cache.EntryListenerAdapter
 import org.axonframework.common.caching.NoCache
 import org.axonframework.eventsourcing.eventstore.EventStore
+import java.time.Instant
 import java.util.*
 
 /**
  * Central component for building ad-hoc projections. THe ModelRepository looks for methods and constructors in the modelClass annotated
  * with Axon's @MessageHandler. When constructing the model instance the domain events will be applied using the annotated methods.
- * The result is put into the given cache.
+ * The result is put into the given cache.<br/>
+ * <br/>
+ * When a cached version is found, by default the Axon server will always be called for new events. With the config parameter
+ * <code>cacheRefreshTime</code> a duration (in ms) can be defined for which the cached entry will be considered as up-to-date without
+ * checking for new events in the event store.
  *
  * @param eventStore the axon eventStore to use
  * @param modelClass the model class type to build the projection on
- * @param cache the cache to use
+ * @param config the repository config to apply
  */
 open class ModelRepository<T : Any>(
   private val eventStore: EventStore,
   private val modelClass: Class<T>,
-  protected val cache: Cache = NoCache.INSTANCE
+  protected val config: ModelRepositoryConfig = ModelRepositoryConfig.defaults(),
 ) {
   companion object : KLogging()
 
-  init {
-    cache.registerCacheEntryListener(LoggingCacheEntryListener(modelClass.simpleName))
-  }
-
+  protected val cache: Cache = config.cache
   private val modelInspector = ModelInspector(modelClass)
   private val modelFactory = ModelFactory(modelInspector)
   protected val eventApplier = EventApplier(modelInspector)
 
+  init {
+    require(config.cacheRefreshTime >= 0L) { "The cache refresh time must not be negative" }
+    cache.registerCacheEntryListener(LoggingCacheEntryListener(modelClass.simpleName))
+  }
+
   /**
    * Looks for all events of this aggregateId and constructs a model instance. If a cached version exists, only the remaining new events
-   * are applied to the cached instance. THe final model instance will again be put into the cache.
+   * are applied to the cached instance. The final model instance will again be put into the cache.
    *
    * @param aggregateId the aggregateId
    * @return either the built model or an empty optional if the aggregateId had no events
    */
   fun findById(aggregateId: String): Optional<T> {
     return if (cache.containsKey(aggregateId)) {
-      Optional.of(readAndUpdateModelFromCache(aggregateId))
+      val cacheEntry: CacheEntry<T> = cache[aggregateId]
+      if (config.cacheRefreshTime == 0L || cacheEntry.created.isBefore(Instant.now().minusMillis(config.cacheRefreshTime))) {
+        Optional.of(readAndUpdateModelFromCache(aggregateId))
+      } else {
+        Optional.of(cacheEntry.model)
+      }
     } else {
       readModelFromScratch(aggregateId)
     }
@@ -70,10 +82,10 @@ open class ModelRepository<T : Any>(
     events
       .filter { it.sequenceNumber <= seqNo }
       .forEachRemaining { event ->
-      logger.debug { "Reading event ${event.payloadType.simpleName} with seqNo ${event.sequenceNumber} for aggregate ID $aggregateId" }
-      lastSeqNo = event.sequenceNumber
-      model = eventApplier.applyEvent(model, event)
-    }
+        logger.debug { "Reading event ${event.payloadType.simpleName} with seqNo ${event.sequenceNumber} for aggregate ID $aggregateId" }
+        lastSeqNo = event.sequenceNumber
+        model = eventApplier.applyEvent(model, event)
+      }
 
     return CacheEntry(aggregateId, lastSeqNo, model)
   }
@@ -85,8 +97,13 @@ open class ModelRepository<T : Any>(
 
     val lastSeqNo = eventStore.lastSequenceNumberFor(aggregateId).orElseThrow()
 
+    // cache still uptodate, can directly return cache entry
     if (lastSeqNo == currentCacheEntry.seqNo) {
-      // cache still uptodate, can directly return cache entry
+      // refresh cache timestamp only when too old
+      if (config.cacheRefreshTime != 0L && currentCacheEntry.created.isBefore(Instant.now().minusMillis(config.cacheRefreshTime))) {
+        cache.put(aggregateId, currentCacheEntry.copy(created = Instant.now()))
+      }
+
       return currentCacheEntry.model
     }
     var model: T = currentCacheEntry.model
@@ -96,9 +113,9 @@ open class ModelRepository<T : Any>(
     events
       .filter { it.sequenceNumber <= seqNo }
       .forEachRemaining { event ->
-      logger.debug { "Reading event ${event.payloadType.simpleName} with seqNo ${event.sequenceNumber} for aggregate ID $aggregateId" }
-      model = eventApplier.applyEvent(model, event)
-    }
+        logger.debug { "Reading event ${event.payloadType.simpleName} with seqNo ${event.sequenceNumber} for aggregate ID $aggregateId" }
+        model = eventApplier.applyEvent(model, event)
+      }
 
     val newCacheEntry = CacheEntry(aggregateId, lastSeqNo, model)
     cache.put(aggregateId, newCacheEntry)
@@ -112,23 +129,23 @@ open class ModelRepository<T : Any>(
     companion object : KLogging()
 
     override fun onEntryCreated(key: Any?, value: Any?) {
-      logger.debug { "$cacheName: Cache entry $key created" }
+      logger.trace { "$cacheName: Cache entry $key created" }
     }
 
     override fun onEntryExpired(key: Any?) {
-      logger.debug { "$cacheName: Cache entry $key expired" }
+      logger.trace { "$cacheName: Cache entry $key expired" }
     }
 
     override fun onEntryRemoved(key: Any?) {
-      logger.debug { "$cacheName: Cache entry $key removed" }
+      logger.trace { "$cacheName: Cache entry $key removed" }
     }
   }
-
 }
 
-internal class CacheEntry<T>(
+internal data class CacheEntry<T>(
   val aggregateId: String,
   val seqNo: Long,
-  val model: T
+  val model: T,
+  val created: Instant = Instant.now(),
 )
 

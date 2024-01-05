@@ -1,15 +1,23 @@
-package io.holixon.axon.projection.adhoc._itestbase
+package io.holixon.axon.projection.adhoc
 
 import org.axonframework.common.Registration
 import org.axonframework.common.caching.Cache
+import java.util.Collections
 
+/**
+ * Cache implementation providing a least-recently-used behavior. The cache has a fixed maximum size. When the cache is full and an item is
+ * added to the cache, the element is removed which last access was the longest ago.
+ *
+ * @param maxSize the max size of this cache
+ */
 class LRUCache(val maxSize: Int) : Cache {
 
-  private val internalCache: MutableMap<Any?, Any?> = object : LinkedHashMap<Any?, Any?>(0, 0.75f, true) {
+  private val internalCache: MutableMap<Any?, Any?> = Collections.synchronizedMap(object : LinkedHashMap<Any?, Any?>(0, 0.75f, true) {
     override fun removeEldestEntry(eldest: MutableMap.MutableEntry<Any?, Any?>?): Boolean {
       return size > maxSize
     }
-  }
+  })
+
   override fun <K : Any?, V : Any?> get(key: K): V {
     return internalCache[key] as V
   }
