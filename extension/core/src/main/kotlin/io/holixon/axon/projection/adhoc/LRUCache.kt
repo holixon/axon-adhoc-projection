@@ -18,8 +18,8 @@ class LRUCache(val maxSize: Int) : Cache {
     }
   })
 
-  override fun <K : Any?, V : Any?> get(key: K): V {
-    return internalCache[key] as V
+  override fun <K : Any?, V : Any?> get(key: K): V? {
+    return internalCache[key]?.let { it as V }
   }
 
   override fun put(key: Any?, value: Any?) {

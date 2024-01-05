@@ -2,22 +2,26 @@ package io.holixon.axon.projection.adhoc.dummy
 
 import java.util.*
 
+interface BankAccountEvent {
+  val bankAccountId: UUID
+}
+
 data class BankAccountCreatedEvent(
-  val bankAccountId: UUID,
+  override val bankAccountId: UUID,
   val owner: String,
-)
+) : BankAccountEvent
 
 data class MoneyWithdrawnEvent(
-  val bankAccountId: UUID,
+  override val bankAccountId: UUID,
   val amountInEuroCent: Int
-)
+) : BankAccountEvent
 
 data class MoneyDepositedEvent(
-  val bankAccountId: UUID,
+  override val bankAccountId: UUID,
   val amountInEuroCent: Int
-)
+) : BankAccountEvent
 
 data class OwnerChangedEvent(
-  val bankAccountId: UUID,
+  override val bankAccountId: UUID,
   val owner: String
-)
+) : BankAccountEvent
