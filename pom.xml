@@ -26,7 +26,7 @@
     <!-- TEST -->
     <dom4j.version>2.1.4</dom4j.version>
     <jaxen.version>2.0.0</jaxen.version>
-    <mockk.version>1.13.8</mockk.version>
+    <mockk.version>1.13.9</mockk.version>
 
     <!-- MAVEN -->
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
