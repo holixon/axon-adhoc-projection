@@ -26,8 +26,8 @@
     <!-- TEST -->
     <dom4j.version>2.1.4</dom4j.version>
     <jaxen.version>2.0.0</jaxen.version>
-    <mockk.version>1.13.8</mockk.version>
     <awaitility.version>4.2.0</awaitility.version>
+    <mockk.version>1.13.9</mockk.version>
 
     <!-- MAVEN -->
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -56,7 +56,7 @@
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
-        <version>3.2.1</version>
+        <version>3.2.2</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -65,7 +65,7 @@
       <dependency>
         <groupId>org.axonframework</groupId>
         <artifactId>axon-bom</artifactId>
-        <version>4.9.2</version>
+        <version>4.9.3</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -281,7 +281,7 @@
         <!-- Surefire -->
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.2.3</version>
+          <version>3.2.5</version>
           <configuration>
             <useSystemClassLoader>false</useSystemClassLoader>
             <shutdown>kill</shutdown>
@@ -304,7 +304,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>3.2.3</version>
+          <version>3.2.5</version>
         </plugin>
 
         <!-- KDoc generation -->
