@@ -51,7 +51,7 @@ data class CurrentBalanceModel(
   )
 }
 ```
-The plugin scans for any `@MessageHandler annotation on either constructors or methods.
+The plugin scans for any `@MessageHandler` annotation on either constructors or methods.
 
 **Constructors:**
 - the model class must have either a default constructor or an annotated constructor accepting the first event of the event stream
