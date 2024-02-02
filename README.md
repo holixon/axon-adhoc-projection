@@ -3,7 +3,7 @@
 [![stable](https://img.shields.io/badge/lifecycle-STABLE-green.svg)](https://github.com/holisticon#open-source-lifecycle)
 [![Build Status](https://github.com/holixon/axon-adhoc-projection/workflows/Development%20branches/badge.svg)](https://github.com/holixon/axon-adhoc-projection/actions)
 [![sponsored](https://img.shields.io/badge/sponsoredBy-Holisticon-RED.svg)](https://holisticon.de/)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.holixon.axon/axon-adhoc-projection/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.holixon.axon/axon-adhoc-projection)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.holixon.axon/axon-adhoc-projection-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.holixon.axon/axon-adhoc-projection-core)
 
 This library provides a stateless model repository for Axon Framework using selective event retrieval executed during query. 
 The advantage is, that one does not need a `TrackingEventProcessor`, `TokenStore`  or other kind of persistence other than the Axon Server itself. 
