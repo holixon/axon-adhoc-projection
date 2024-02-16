@@ -17,7 +17,7 @@ To use the extension, simply include the artifact in your POM:
     <dependency>
       <groupId>io.holixon.axon</groupId>
       <artifactId>axon-adhoc-projection-core</artifactId>
-      <version>0.0.1</version>
+      <version>0.0.2</version>
     </dependency>
 ```
 

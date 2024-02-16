@@ -19,7 +19,8 @@ import java.util.*
 open class ModelRepository<T : Any>(
   private val eventStore: EventStore,
   private val modelClass: Class<T>,
-  private val cache: Cache = NoCache.INSTANCE
+  private val cache: Cache = NoCache.INSTANCE,
+  private val skipSnapshotEvents: Boolean = false
 ) {
   companion object : KLogging()
 
@@ -59,7 +60,12 @@ open class ModelRepository<T : Any>(
 
   internal fun createCacheEntryFromScratch(aggregateId: String): CacheEntry<T>? {
     logger.debug { "Reading model for ${modelClass.simpleName} with ID $aggregateId from scratch" }
-    val events = eventStore.readEvents(aggregateId)
+    val events = if (skipSnapshotEvents) {
+      // read from the very first event and not starting with last snapshot
+      eventStore.readEvents(aggregateId, 0L)
+    } else {
+      eventStore.readEvents(aggregateId)
+    }
     if (!events.hasNext()) {
       return null
     }
