@@ -16,3 +16,9 @@ data class MoneyDepositedEvent(
   val bankAccountId: UUID,
   val amountInEuroCent: Int
 )
+
+data class BankAccountAggregate(
+  val bankAccountId: UUID,
+  val owner: String,
+  val amountInEuroCent: Int
+)
