@@ -46,7 +46,7 @@ class ModelRepositoryTest {
 
   @Test
   fun `create model from scratch ignore snapshot`() {
-    val repository = ModelRepository(eventStore, CurrentBalanceImmutableModel::class.java, cache, true)
+    val repository = ModelRepository(eventStore, CurrentBalanceImmutableModel::class.java, cache, skipSnapshotEvents = true)
     val bankAccountId = UUID.randomUUID()
     mockEventStore(
       bankAccountId, listOf(
@@ -62,6 +62,7 @@ class ModelRepositoryTest {
 
     assertThat(model).isPresent
 
+    verify(exactly = 0) { eventStore.readEvents(eq(bankAccountId.toString())) }
     verify { eventStore.readEvents(eq(bankAccountId.toString()), eq(0L)) }
     verify { cache.containsKey(eq(bankAccountId.toString())) }
     verify { cache.put(eq(bankAccountId.toString()), any()) }

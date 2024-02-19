@@ -73,6 +73,13 @@ class CurrentBalanceModelRepository(eventStore: EventStore) :
 The repository can use a cache in the same manner aggregates can be cached. By default, the `NoCache` will be used.
 When using any cache implemented as in-memory solution, it is strongly advised to use an immutable model to be threadsafe.
 
+Normally the repository will start reading events from the last snapshot event onwards (if snapshotting is enabled). If you always
+want to read the events from the beginning, you can enable this via a boolean option in the `ModelRepository` class.
+```kotlin
+class CurrentBalanceModelRepository(eventStore: EventStore) :
+    ModelRepository<CurrentBalanceModel>(eventStore, CurrentBalanceModel::class.java, NoCache.INSTANCE, skipSnapshotEvents = true)
+```
+
 The final usage is fairly simple:
 ```kotlin
 val repository = CurrentBalanceModelRepository(eventStore)
