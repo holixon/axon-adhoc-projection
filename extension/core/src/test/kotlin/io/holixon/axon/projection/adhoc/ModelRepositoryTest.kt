@@ -1,5 +1,6 @@
 package io.holixon.axon.projection.adhoc
 
+import io.holixon.axon.projection.adhoc.dummy.BankAccountAggregate
 import io.holixon.axon.projection.adhoc.dummy.BankAccountCreatedEvent
 import io.holixon.axon.projection.adhoc.dummy.CurrentBalanceImmutableModel
 import io.holixon.axon.projection.adhoc.dummy.MoneyDepositedEvent
@@ -39,6 +40,30 @@ class ModelRepositoryTest {
     assertThat(model).isPresent
 
     verify { eventStore.readEvents(eq(bankAccountId.toString())) }
+    verify { cache.containsKey(eq(bankAccountId.toString())) }
+    verify { cache.put(eq(bankAccountId.toString()), any()) }
+  }
+
+  @Test
+  fun `create model from scratch ignore snapshot`() {
+    val repository = ModelRepository(eventStore, CurrentBalanceImmutableModel::class.java, cache, ignoreSnapshotEvents = true)
+    val bankAccountId = UUID.randomUUID()
+    mockEventStore(
+      bankAccountId, listOf(
+        BankAccountCreatedEvent(bankAccountId, "Alice"),
+        MoneyDepositedEvent(bankAccountId, 100),
+        BankAccountAggregate(bankAccountId, "Alice", 100),
+        MoneyDepositedEvent(bankAccountId, 30),
+        MoneyDepositedEvent(bankAccountId, 10),
+      )
+    )
+
+    val model = repository.findById(bankAccountId.toString())
+
+    assertThat(model).isPresent
+
+    verify(exactly = 0) { eventStore.readEvents(eq(bankAccountId.toString())) }
+    verify { eventStore.readEvents(eq(bankAccountId.toString()), eq(0L)) }
     verify { cache.containsKey(eq(bankAccountId.toString())) }
     verify { cache.put(eq(bankAccountId.toString()), any()) }
   }
@@ -119,6 +144,7 @@ class ModelRepositoryTest {
 
     every { eventStore.lastSequenceNumberFor(eq(aggregateId.toString())) } returns Optional.of(seqNo)
     every { eventStore.readEvents(eq(aggregateId.toString())) } returns eventStream
+    every { eventStore.readEvents(eq(aggregateId.toString()), eq(0L)) } returns eventStream
     every { eventStore.readEvents(eq(aggregateId.toString()), any()) } answers {
       val firstSecNo = it.invocation.args[1] as Long
       eventStream.filter { event -> event.sequenceNumber >= firstSecNo }

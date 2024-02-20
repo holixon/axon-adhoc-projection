@@ -17,7 +17,7 @@ To use the extension, simply include the artifact in your POM:
     <dependency>
       <groupId>io.holixon.axon</groupId>
       <artifactId>axon-adhoc-projection-core</artifactId>
-      <version>0.0.1</version>
+      <version>0.0.2</version>
     </dependency>
 ```
 
@@ -72,6 +72,15 @@ class CurrentBalanceModelRepository(eventStore: EventStore) :
 ```
 The repository can use a cache in the same manner aggregates can be cached. By default, the `NoCache` will be used.
 When using any cache implemented as in-memory solution, it is strongly advised to use an immutable model to be threadsafe.
+
+Normally the repository will start reading events from the latest snapshot event onwards (if snapshotting is enabled).
+If you always want to read the events from the beginning, you can enable this via the 
+boolean option `ignoreSnapshotEvents` in the `ModelRepository` class.
+
+```kotlin
+class CurrentBalanceModelRepository(eventStore: EventStore) :
+    ModelRepository<CurrentBalanceModel>(eventStore, CurrentBalanceModel::class.java, NoCache.INSTANCE, ignoreSnapshotEvents = true)
+```
 
 The final usage is fairly simple:
 ```kotlin

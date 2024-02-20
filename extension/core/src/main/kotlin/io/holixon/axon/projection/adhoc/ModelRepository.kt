@@ -15,11 +15,13 @@ import java.util.*
  * @param eventStore the axon eventStore to use
  * @param modelClass the model class type to build the projection on
  * @param cache the cache to use
+ * @param ignoreSnapshotEvents flag whether to read from latest snapshot or always from the beginning
  */
 open class ModelRepository<T : Any>(
   private val eventStore: EventStore,
   private val modelClass: Class<T>,
-  private val cache: Cache = NoCache.INSTANCE
+  private val cache: Cache = NoCache.INSTANCE,
+  private val ignoreSnapshotEvents: Boolean = false
 ) {
   companion object : KLogging()
 
@@ -59,7 +61,12 @@ open class ModelRepository<T : Any>(
 
   internal fun createCacheEntryFromScratch(aggregateId: String): CacheEntry<T>? {
     logger.debug { "Reading model for ${modelClass.simpleName} with ID $aggregateId from scratch" }
-    val events = eventStore.readEvents(aggregateId)
+    val events = if (ignoreSnapshotEvents) {
+      // read from the very first event and not starting with latest snapshot
+      eventStore.readEvents(aggregateId, 0L)
+    } else {
+      eventStore.readEvents(aggregateId)
+    }
     if (!events.hasNext()) {
       return null
     }
