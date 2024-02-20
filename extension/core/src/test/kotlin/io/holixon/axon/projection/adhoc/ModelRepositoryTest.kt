@@ -46,7 +46,7 @@ class ModelRepositoryTest {
 
   @Test
   fun `create model from scratch ignore snapshot`() {
-    val repository = ModelRepository(eventStore, CurrentBalanceImmutableModel::class.java, cache, skipSnapshotEvents = true)
+    val repository = ModelRepository(eventStore, CurrentBalanceImmutableModel::class.java, cache, ignoreSnapshotEvents = true)
     val bankAccountId = UUID.randomUUID()
     mockEventStore(
       bankAccountId, listOf(
