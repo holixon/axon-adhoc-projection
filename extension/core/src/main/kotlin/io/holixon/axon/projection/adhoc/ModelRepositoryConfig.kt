@@ -20,11 +20,16 @@ data class ModelRepositoryConfig(
    */
   val cacheRefreshTime: Long = 0L,
   /**
+   * By default, a DomainEventStream for an aggregate starts at the last snapshot event and ignores all prior events.
+   * With this flag set to <code>true</code>, the stream will always start at sequenceNo 0.
+   */
+  val ignoreSnapshotEvents: Boolean = false,
+  /**
    * Just for UpdatingModelRepository - Configures the behavior when an event of an uncached entity is received. When <code>false</code>
    * the event is ignored, when <code>true</code>, a full replay of this entity is performed and the result is added to the cache. Default is <code>false</code>
    */
-  val forceCacheInsert: Boolean = false
-) {
+  val forceCacheInsert: Boolean = false,
+  ) {
   companion object {
     /**
      * Returns a config with default settings.
@@ -46,6 +51,14 @@ data class ModelRepositoryConfig(
    * @param cacheRefreshTime the cacheRefreshTime
    */
   fun withCacheRefreshTime(cacheRefreshTime: Long): ModelRepositoryConfig = copy(cacheRefreshTime = cacheRefreshTime)
+
+  /**
+   * By default, a DomainEventStream for an aggregate starts at the last snapshot event and ignores all prior events.
+   * With this flag set to <code>true</code>, the stream will always start at sequenceNo 0.
+   *
+   * @param ignoreSnapshotEvents if to ignore snapshots or not
+   */
+  fun withIgnoreSnapshotEvents(ignoreSnapshotEvents: Boolean): ModelRepositoryConfig = copy(ignoreSnapshotEvents = ignoreSnapshotEvents)
 
   /**
    * Just for UpdatingModelRepository - Configures the behavior when an event of an uncached entity is received. When <code>false</code>

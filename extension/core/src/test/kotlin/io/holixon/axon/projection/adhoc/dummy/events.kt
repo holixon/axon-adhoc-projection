@@ -25,3 +25,9 @@ data class OwnerChangedEvent(
   override val bankAccountId: UUID,
   val owner: String
 ) : BankAccountEvent
+
+data class BankAccountAggregate(
+  val bankAccountId: UUID,
+  val owner: String,
+  val amountInEuroCent: Int
+)

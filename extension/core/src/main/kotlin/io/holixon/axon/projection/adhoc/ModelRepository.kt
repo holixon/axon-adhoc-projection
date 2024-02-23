@@ -71,7 +71,12 @@ open class ModelRepository<T : Any>(
 
   internal fun createCacheEntryFromScratch(aggregateId: String, seqNo: Long = Long.MAX_VALUE): CacheEntry<T>? {
     logger.debug { "Reading model for ${modelClass.simpleName} with ID $aggregateId from scratch" }
-    val events = eventStore.readEvents(aggregateId)
+    val events = if (config.ignoreSnapshotEvents) {
+      // read from the very first event and not starting with latest snapshot
+      eventStore.readEvents(aggregateId, 0L)
+    } else {
+      eventStore.readEvents(aggregateId)
+    }
     if (!events.hasNext()) {
       return null
     }
