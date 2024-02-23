@@ -7,22 +7,40 @@ import org.axonframework.common.caching.NoCache
 import org.axonframework.eventsourcing.eventstore.EventStore
 import java.util.*
 
+/**
+ * Central component for building ad-hoc projections. THe ModelRepository looks for methods and constructors in the modelClass annotated
+ * with Axon's @MessageHandler. When constructing the model instance the domain events will be applied using the annotated methods.
+ * The result is put into the given cache.
+ *
+ * @param eventStore the axon eventStore to use
+ * @param modelClass the model class type to build the projection on
+ * @param cache the cache to use
+ * @param ignoreSnapshotEvents flag whether to read from latest snapshot or always from the beginning
+ */
 open class ModelRepository<T : Any>(
-  private val eventStore : EventStore,
-  private val clazz: Class<T>,
-  private val cache: Cache = NoCache.INSTANCE
+  private val eventStore: EventStore,
+  private val modelClass: Class<T>,
+  private val cache: Cache = NoCache.INSTANCE,
+  private val ignoreSnapshotEvents: Boolean = false
 ) {
   companion object : KLogging()
 
   init {
-    cache.registerCacheEntryListener(LoggingCacheEntryListener(clazz.simpleName))
+    cache.registerCacheEntryListener(LoggingCacheEntryListener(modelClass.simpleName))
   }
 
-  private val modelInspector = ModelInspector(clazz)
+  private val modelInspector = ModelInspector(modelClass)
   private val modelFactory = ModelFactory(modelInspector)
   private val eventApplier = EventApplier(modelInspector)
 
-  fun findById(aggregateId: String) : Optional<T> {
+  /**
+   * Looks for all events of this aggregateId and constructs a model instance. If a cached version exists, only the remaining new events
+   * are applied to the cached instance. THe final model instance will again be put into the cache.
+   *
+   * @param aggregateId the aggregateId
+   * @return either the built model or an empty optional if the aggregateId had no events
+   */
+  fun findById(aggregateId: String): Optional<T> {
     return if (cache.containsKey(aggregateId)) {
       Optional.of(readAndUpdateModelFromCache(aggregateId))
     } else {
@@ -30,7 +48,7 @@ open class ModelRepository<T : Any>(
     }
   }
 
-  internal fun readModelFromScratch(aggregateId: String) : Optional<T> {
+  internal fun readModelFromScratch(aggregateId: String): Optional<T> {
     val cacheEntry = createCacheEntryFromScratch(aggregateId)
 
     return if (cacheEntry != null) {
@@ -41,9 +59,14 @@ open class ModelRepository<T : Any>(
     }
   }
 
-  internal fun createCacheEntryFromScratch(aggregateId: String) : CacheEntry<T>? {
-    logger.debug { "Reading model for ${clazz.simpleName} with ID $aggregateId from scratch" }
-    val events = eventStore.readEvents(aggregateId)
+  internal fun createCacheEntryFromScratch(aggregateId: String): CacheEntry<T>? {
+    logger.debug { "Reading model for ${modelClass.simpleName} with ID $aggregateId from scratch" }
+    val events = if (ignoreSnapshotEvents) {
+      // read from the very first event and not starting with latest snapshot
+      eventStore.readEvents(aggregateId, 0L)
+    } else {
+      eventStore.readEvents(aggregateId)
+    }
     if (!events.hasNext()) {
       return null
     }
@@ -61,9 +84,9 @@ open class ModelRepository<T : Any>(
   }
 
 
-  internal fun readAndUpdateModelFromCache(aggregateId: String) : T {
+  internal fun readAndUpdateModelFromCache(aggregateId: String): T {
     val currentCacheEntry = cache.get<String, CacheEntry<T>>(aggregateId)
-    logger.debug { "Reading cached model for ${clazz.simpleName} with ID $aggregateId and seqNo ${currentCacheEntry.seqNo}" }
+    logger.debug { "Reading cached model for ${modelClass.simpleName} with ID $aggregateId and seqNo ${currentCacheEntry.seqNo}" }
 
     val lastSeqNo = eventStore.lastSequenceNumberFor(aggregateId).orElseThrow()
 
@@ -89,7 +112,7 @@ open class ModelRepository<T : Any>(
   internal class LoggingCacheEntryListener(
     private val cacheName: String
   ) : EntryListenerAdapter() {
-    companion object: KLogging()
+    companion object : KLogging()
 
     override fun onEntryCreated(key: Any?, value: Any?) {
       logger.debug { "$cacheName: Cache entry $key created" }

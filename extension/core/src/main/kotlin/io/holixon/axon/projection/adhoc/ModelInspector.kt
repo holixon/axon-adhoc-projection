@@ -3,6 +3,11 @@ package io.holixon.axon.projection.adhoc
 import org.axonframework.messaging.annotation.*
 import java.lang.reflect.Constructor
 
+/**
+ * Inspects the model class for constructors and methods annotated with <code>@MessageHandler</code>
+ *
+ * @param inspectedType the model class to inspect
+ */
 class ModelInspector<T>(
   val inspectedType: Class<T>
 ) {
@@ -21,20 +26,34 @@ class ModelInspector<T>(
     }
   }
 
-
+  /**
+   * returns the default constructor.
+   */
   fun getDefaultConstructor(): Constructor<T> {
     return inspectedType.getConstructor()
   }
 
+  /**
+   * Looks for a constructor able to handle the given payload.
+   *
+   * @param eventClass the class of the event payload
+   * @return messageHandlingMember or <code>null</code> if none found
+   */
   fun <E> findConstructor(eventClass: Class<E>): MessageHandlingMember<T>? {
     return constructors[eventClass]
   }
 
-  fun <E> findEventHandler(eventClazz: Class<E>): MessageHandlingMember<T>? {
-    return methods[eventClazz]
+  /**
+   * Looks for a method able to handle the given payload.
+   *
+   * @param eventClass the class of the event payload
+   * @return messageHandlingMember or <code>null</code> if none found
+   */
+  fun <E> findEventHandler(eventClass: Class<E>): MessageHandlingMember<T>? {
+    return methods[eventClass]
   }
 
-  internal fun inspectForMethods(parameterResolverFactory: ParameterResolverFactory, handlerDefinition: HandlerDefinition) {
+  private fun inspectForMethods(parameterResolverFactory: ParameterResolverFactory, handlerDefinition: HandlerDefinition) {
     inspectedType.getDeclaredMethods()
       .forEach { method ->
         handlerDefinition.createHandler(inspectedType, method, parameterResolverFactory)
@@ -50,7 +69,7 @@ class ModelInspector<T>(
       }
   }
 
-  internal fun inspectForConstructors(parameterResolverFactory: ParameterResolverFactory, handlerDefinition: HandlerDefinition) {
+  private fun inspectForConstructors(parameterResolverFactory: ParameterResolverFactory, handlerDefinition: HandlerDefinition) {
     inspectedType.getDeclaredConstructors().forEach { constructor ->
       handlerDefinition.createHandler(inspectedType, constructor, parameterResolverFactory)
         .ifPresent {

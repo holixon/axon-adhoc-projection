@@ -3,7 +3,7 @@
 [![stable](https://img.shields.io/badge/lifecycle-STABLE-green.svg)](https://github.com/holisticon#open-source-lifecycle)
 [![Build Status](https://github.com/holixon/axon-adhoc-projection/workflows/Development%20branches/badge.svg)](https://github.com/holixon/axon-adhoc-projection/actions)
 [![sponsored](https://img.shields.io/badge/sponsoredBy-Holisticon-RED.svg)](https://holisticon.de/)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.holixon.axon/axon-adhoc-projection/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.holixon.axon/axon-adhoc-projection)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.holixon.axon/axon-adhoc-projection-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.holixon.axon/axon-adhoc-projection-core)
 
 This library provides a stateless model repository for Axon Framework using selective event retrieval executed during query. 
 The advantage is, that one does not need a `TrackingEventProcessor`, `TokenStore`  or other kind of persistence other than the Axon Server itself. 
@@ -17,7 +17,7 @@ To use the extension, simply include the artifact in your POM:
     <dependency>
       <groupId>io.holixon.axon</groupId>
       <artifactId>axon-adhoc-projection-core</artifactId>
-      <version>0.0.1</version>
+      <version>0.0.2</version>
     </dependency>
 ```
 
@@ -51,7 +51,7 @@ data class CurrentBalanceModel(
   )
 }
 ```
-The plugin scans for any `@MessageHandler annotation on either constructors or methods.
+The plugin scans for any `@MessageHandler` annotation on either constructors or methods.
 
 **Constructors:**
 - the model class must have either a default constructor or an annotated constructor accepting the first event of the event stream
@@ -72,6 +72,15 @@ class CurrentBalanceModelRepository(eventStore: EventStore) :
 ```
 The repository can use a cache in the same manner aggregates can be cached. By default, the `NoCache` will be used.
 When using any cache implemented as in-memory solution, it is strongly advised to use an immutable model to be threadsafe.
+
+Normally the repository will start reading events from the latest snapshot event onwards (if snapshotting is enabled).
+If you always want to read the events from the beginning, you can enable this via the 
+boolean option `ignoreSnapshotEvents` in the `ModelRepository` class.
+
+```kotlin
+class CurrentBalanceModelRepository(eventStore: EventStore) :
+    ModelRepository<CurrentBalanceModel>(eventStore, CurrentBalanceModel::class.java, NoCache.INSTANCE, ignoreSnapshotEvents = true)
+```
 
 The final usage is fairly simple:
 ```kotlin
