@@ -3,6 +3,7 @@ package io.holixon.axon.projection.adhoc.rest
 import io.holixon.axon.projection.adhoc.model.BankAccountCreatedEvent
 import io.holixon.axon.projection.adhoc.model.MoneyDepositedEvent
 import io.holixon.axon.projection.adhoc.model.MoneyWithdrawnEvent
+import io.holixon.axon.projection.adhoc.model.OwnerChangedEvent
 import mu.KLogging
 import org.axonframework.eventhandling.DomainEventMessage
 import org.axonframework.eventhandling.GenericDomainEventMessage
@@ -73,12 +74,19 @@ class DataGenerationController(
             MoneyWithdrawnEvent::class.java.typeName,
             bankAccountId.toString(),
             i,
-            MoneyDepositedEvent(bankAccountId, Random.nextInt(100, 200))
+            MoneyWithdrawnEvent(bankAccountId, Random.nextInt(100, 200))
           )
         )
       }
-
     }
+
+    events.add(
+      GenericDomainEventMessage(
+        OwnerChangedEvent::class.java.typeName,
+        bankAccountId.toString(),
+        events.size.toLong(),
+        OwnerChangedEvent(bankAccountId, "Someone else"))
+      )
 
     eventStore.publish(events)
   }

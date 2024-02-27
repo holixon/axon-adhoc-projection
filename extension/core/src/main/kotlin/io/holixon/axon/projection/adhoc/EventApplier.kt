@@ -10,6 +10,15 @@ class EventApplier<T>(
 ) {
 
   /**
+   * Checks if the given event message is relevant for the configured model.
+   *
+   * @param event the event message
+   * @return true if the event message can be handled by the model, otherwise false
+   */
+  fun <E> isRelevant(event: DomainEventMessage<E>): Boolean =
+    modelInspector.findEventHandler(event.payloadType) != null
+
+  /**
    * Tries to apply the given event to the given model instance.
    * <ul>
    *   <li>if no annotated MessageHandler is found for the domainEvent's payload type, the model will be returned untouched. </li>

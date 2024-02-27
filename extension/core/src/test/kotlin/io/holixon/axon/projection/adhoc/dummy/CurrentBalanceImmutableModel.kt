@@ -1,7 +1,6 @@
 package io.holixon.axon.projection.adhoc.dummy
 
 import io.holixon.axon.projection.adhoc.ModelRepository
-import org.axonframework.common.caching.WeakReferenceCache
 import org.axonframework.eventhandling.EventHandler
 import org.axonframework.eventhandling.SequenceNumber
 import org.axonframework.eventhandling.Timestamp
@@ -43,4 +42,7 @@ data class CurrentBalanceImmutableModel(
 }
 
 class CurrentBalanceImmutableModelRepository(eventStore: EventStore) :
-  ModelRepository<CurrentBalanceImmutableModel>(eventStore, CurrentBalanceImmutableModel::class.java, WeakReferenceCache())
+  ModelRepository<CurrentBalanceImmutableModel>(
+    eventStore,
+    CurrentBalanceImmutableModel::class.java,
+  )

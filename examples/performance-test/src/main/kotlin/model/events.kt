@@ -16,3 +16,8 @@ data class MoneyDepositedEvent(
   val bankAccountId: UUID,
   val amountInEuroCent: Int
 )
+
+data class OwnerChangedEvent(
+  val bankAccountId: UUID,
+  val owner: String
+)

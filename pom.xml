@@ -26,6 +26,7 @@
     <!-- TEST -->
     <dom4j.version>2.1.4</dom4j.version>
     <jaxen.version>2.0.0</jaxen.version>
+    <awaitility.version>4.2.0</awaitility.version>
     <mockk.version>1.13.9</mockk.version>
 
     <!-- MAVEN -->

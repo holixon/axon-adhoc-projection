@@ -9,6 +9,9 @@ This library provides a stateless model repository for Axon Framework using sele
 The advantage is, that one does not need a `TrackingEventProcessor`, `TokenStore`  or other kind of persistence other than the Axon Server itself. 
 The `ModelRepository` directly accesses the event store and constructs the model on the fly by applying the events directly to the model.
 
+> **_NOTE:_**  This library is still under development. API changes may occur while using versions 0.x
+
+
 ## Usage
 
 To use the extension, simply include the artifact in your POM:
@@ -68,7 +71,7 @@ Then define a repository extending from `ModelRepository` class
 
 ```kotlin
 class CurrentBalanceModelRepository(eventStore: EventStore) :
-    ModelRepository<CurrentBalanceModel>(eventStore, CurrentBalanceModel::class.java, NoCache.INSTANCE)
+    ModelRepository<CurrentBalanceModel>(eventStore, CurrentBalanceModel::class.java)
 ```
 The repository can use a cache in the same manner aggregates can be cached. By default, the `NoCache` will be used.
 When using any cache implemented as in-memory solution, it is strongly advised to use an immutable model to be threadsafe.
@@ -93,6 +96,35 @@ If a cache was specified, the current instance is also put to the cache. When re
 compares the cached instances sequenceNumber with the lastSequenceNumber in the eventStore and applies missing events if any.
 
 For further examples refer to the *examples* module of this repository.
+
+### Self-updating cache projection
+
+As an extension to the ModelRepository, the `UpdatingModelRepository` is able to update the underlying cache as new events arrive for cached model entities.
+The UpdatingModelRepository must be registered via Axon configuration to be handled as an EventHandler. Easiest way is to create it as Spring bean (when using Spring)
+
+```kotlin
+@Component
+class CurrentBalanceModelRepository(eventStore: EventStore) :
+  UpdatingModelRepository<CurrentBalanceModel>(eventStore, CurrentBalanceModel::class.java) {
+  companion object : KLogging()
+  init {
+    /**
+     * Add a listener which fires on every model change. Can be used to trigger query subscriptions.
+     */
+    addModelUpdatedListener { logger.debug { "Updated ${it.bankAccountId}" } }
+  }
+}
+```
+
+## Configuration
+
+The `ModelRepository` and subclasses take a `ModelRepositoryConfig` object for more detailed configuration.
+
+| Parameter        | Description                                                                                                                                                                                                                                     | Default value  |
+|------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------|
+| cache            | the cache implementation to use                                                                                                                                                                                                                 | LRUCache(1024) |
+| cacheRefreshTime | Time in ms a cache entry is considered up-to-date and no eventStore will be queried for new/missed events.<br/>When using the UpdatingModelRepository` consider a value other than 0 to use the advantage of the self-updating repo.            | 0 (ms)         |
+| forceCacheInsert | Just for UpdatingModelRepository - Configures the behavior when an event of an uncached entity is received.<br/>When _false_ the event is ignored, when _true_, a full replay of this entity is performed and the result is added to the cache. | false          |
 
 ## License
 
