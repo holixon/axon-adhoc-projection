@@ -35,7 +35,6 @@ open class ModelRepository<T : Any>(
 
   init {
     require(config.cacheRefreshTime >= 0L) { "The cache refresh time must not be negative" }
-    cache.registerCacheEntryListener(LoggingCacheEntryListener(modelClass.simpleName))
   }
 
   /**
@@ -125,26 +124,11 @@ open class ModelRepository<T : Any>(
 
     return newCacheEntry.model
   }
-
-  internal class LoggingCacheEntryListener(
-    private val cacheName: String
-  ) : EntryListenerAdapter() {
-    companion object : KLogging()
-
-    override fun onEntryCreated(key: Any?, value: Any?) {
-      logger.trace { "$cacheName: Cache entry $key created" }
-    }
-
-    override fun onEntryExpired(key: Any?) {
-      logger.trace { "$cacheName: Cache entry $key expired" }
-    }
-
-    override fun onEntryRemoved(key: Any?) {
-      logger.trace { "$cacheName: Cache entry $key removed" }
-    }
-  }
 }
 
+/**
+ * A cache entry for a model.
+ */
 data class CacheEntry<T>(
   val aggregateId: String,
   val seqNo: Long,
