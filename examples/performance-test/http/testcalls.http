@@ -1,13 +1,13 @@
-POST http://localhost:8080/data-generator/
+POST http://localhost:8088/data-generator/
 Content-Type: application/json
 
 {
-  "numAccounts": 100,
-  "minInteractions": 20,
-  "maxInteractions": 40
+  "numAccounts": 1,
+  "minInteractions": 3,
+  "maxInteractions": 6
 }
 
 ###
 
-GET http://localhost:8080/bankaccount/55b99080-7753-4231-9a38-9d373ba458cc
+GET http://localhost:8088/bankaccount/7f885699-d98a-4685-bd2c-1e699e85a2c5
 Content-Type: application/json

@@ -1,12 +1,10 @@
-server:
-  port: 8088
-
 axon:
   serializer:
     events: jackson
     messages: jackson
     general: jackson
+  axonserver:
+    enabled: false
 
 logging.level:
-  io.holixon: DEBUG
-  io.axoniq.axonserver.connector.event: TRACE
+    io.holixon: DEBUG

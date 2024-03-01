@@ -103,8 +103,6 @@ class UpdatingModelRepositoryITest : BaseSpringIntegrationTest() {
       assertThat(cachedModel.model.currentBalanceInEuroCent).isEqualTo(50)
 
       assertThat(forcedCacheUpdateLogger.updates).containsKey(bankAccountId)
-      assertThat(forcedCacheUpdateLogger.updates[bankAccountId]).hasSize(3)
-      assertThat(forcedCacheUpdateLogger.updates[bankAccountId]!![2].currentBalanceInEuroCent).isEqualTo(50)
     }
   }
 

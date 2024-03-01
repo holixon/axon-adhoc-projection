@@ -15,7 +15,7 @@
   <dependencies>
     <dependency>
       <groupId>io.holixon.axon</groupId>
-      <artifactId>axon-adhoc-projection-core</artifactId>
+      <artifactId>axon-adhoc-projection-spring</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -56,6 +56,10 @@
       <groupId>com.fasterxml.jackson.module</groupId>
       <artifactId>jackson-module-kotlin</artifactId>
     </dependency>
+      <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-actuator</artifactId>
+      </dependency>
   </dependencies>
 
 </project>

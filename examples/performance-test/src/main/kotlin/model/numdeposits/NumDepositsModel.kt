@@ -1,8 +1,9 @@
-package io.holixon.axon.projection.adhoc.model
+package io.holixon.axon.projection.adhoc.model.numdeposits
 
-import io.holixon.axon.projection.adhoc.ModelRepository
 import io.holixon.axon.projection.adhoc.ModelRepositoryConfig
 import io.holixon.axon.projection.adhoc.UpdatingModelRepository
+import io.holixon.axon.projection.adhoc.model.BankAccountCreatedEvent
+import io.holixon.axon.projection.adhoc.model.MoneyDepositedEvent
 import mu.KLogging
 import org.axonframework.eventhandling.SequenceNumber
 import org.axonframework.eventhandling.Timestamp
@@ -12,9 +13,9 @@ import org.springframework.stereotype.Component
 import java.time.Instant
 import java.util.*
 
-data class CurrentBalanceModel(
+data class NumDepositsModel(
   val bankAccountId: UUID,
-  val currentBalanceInEuroCent: Int,
+  val numDeposits: Int,
   val lastModification: Instant,
   val version: Long
 ) {
@@ -22,29 +23,23 @@ data class CurrentBalanceModel(
   @MessageHandler
   constructor(evt: BankAccountCreatedEvent, @Timestamp messageTimestamp: Instant, @SequenceNumber version: Long) : this(
     bankAccountId = evt.bankAccountId,
-    currentBalanceInEuroCent = 0,
+    numDeposits = 0,
     lastModification = messageTimestamp,
     version = version,
   )
 
   @MessageHandler
-  fun on(evt: MoneyDepositedEvent, @Timestamp messageTimestamp: Instant, @SequenceNumber version: Long): CurrentBalanceModel = copy(
-    currentBalanceInEuroCent = this.currentBalanceInEuroCent + evt.amountInEuroCent,
-    lastModification = messageTimestamp,
-    version = version,
-  )
-
-  @MessageHandler
-  fun on(evt: MoneyWithdrawnEvent, @Timestamp messageTimestamp: Instant, @SequenceNumber version: Long): CurrentBalanceModel = copy(
-    currentBalanceInEuroCent = this.currentBalanceInEuroCent - evt.amountInEuroCent,
+  fun on(evt: MoneyDepositedEvent, @Timestamp messageTimestamp: Instant, @SequenceNumber version: Long) = copy(
+    numDeposits = numDeposits+1,
     lastModification = messageTimestamp,
     version = version,
   )
 }
 
 @Component
-class CurrentBalanceModelRepository(eventStore: EventStore) :
-  ModelRepository<CurrentBalanceModel>(
+class NumDepositsModelRepository(eventStore: EventStore) :
+  UpdatingModelRepository<NumDepositsModel>(
     eventStore,
-    CurrentBalanceModel::class.java
+    NumDepositsModel::class.java,
+    ModelRepositoryConfig(forceCacheInsert = true)
   )
