@@ -47,11 +47,12 @@ class AdhocEventMessageHandler : EventMessageHandler {
       }
 
     if (failed.isNotEmpty()) {
-      failed.map { it.javaClass.simpleName }.let {
-        throw Exception("Failed to apply event to following UpdatingModelRepositories: $it")
-      }
+      failed.map { it.javaClass.simpleName }.let { throw ProcessingFailureException(it) }
     }
   }
+
+  class ProcessingFailureException(failedRepositories: List<String>) :
+    Exception("Failed to apply event to following UpdatingModelRepositories: $failedRepositories")
 
   override fun canHandle(message: EventMessage<*>?): Boolean {
     if (message !is DomainEventMessage)
