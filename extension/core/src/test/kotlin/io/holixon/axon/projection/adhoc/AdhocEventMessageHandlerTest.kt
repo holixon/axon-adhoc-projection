@@ -122,7 +122,7 @@ class AdhocEventMessageHandlerTest {
 
     assertThatThrownBy {
       assertThat(handler.handle(message))
-    }.isInstanceOf(AdhocEventMessageHandler.ProcessingFailureException::class.java)
+    }.isInstanceOf(ProcessingFailureException::class.java)
       .hasMessage("Failed to apply event to following UpdatingModelRepositories: [UpdatingModelRepository]")
 
     verify { repository1.on(any()) }

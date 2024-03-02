@@ -51,9 +51,6 @@ class AdhocEventMessageHandler : EventMessageHandler {
     }
   }
 
-  class ProcessingFailureException(failedRepositories: List<String>) :
-    Exception("Failed to apply event to following UpdatingModelRepositories: $failedRepositories")
-
   override fun canHandle(message: EventMessage<*>?): Boolean {
     if (message !is DomainEventMessage)
       return false
@@ -61,3 +58,11 @@ class AdhocEventMessageHandler : EventMessageHandler {
     return updatingModelRepositories.any { it.canHandleMessage(message) }
   }
 }
+
+/**
+ * Indicates that at least one of the registered repositories failed to process the event.
+
+ * @param failedRepositories list of the failed repository class names
+ */
+class ProcessingFailureException(failedRepositories: List<String>) :
+  Exception("Failed to apply event to following UpdatingModelRepositories: $failedRepositories")
