@@ -9,4 +9,3 @@ axon:
 
 logging.level:
   io.holixon: DEBUG
-  io.axoniq.axonserver.connector.event: TRACE

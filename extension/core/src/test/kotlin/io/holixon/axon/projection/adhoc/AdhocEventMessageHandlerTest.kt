@@ -4,6 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.axonframework.eventhandling.DomainEventMessage
 import org.axonframework.eventhandling.GenericEventMessage
 import org.junit.jupiter.api.Test
@@ -86,5 +87,44 @@ class AdhocEventMessageHandlerTest {
     handler.addRepository(repository2)
 
     assertThat(handler.canHandle(message)).isTrue()
+  }
+
+  @Test
+  fun `do not handle with one positive and one negative repository`() {
+    val message = mockk<GenericEventMessage<*>>()
+    val repository1 = mockk<UpdatingModelRepository<*>>()
+    every { repository1.canHandleMessage(any()) } returns false
+    val repository2 = mockk<UpdatingModelRepository<*>>()
+    every { repository2.canHandleMessage(any()) } returns true
+
+    val handler = AdhocEventMessageHandler()
+    handler.addRepository(repository1)
+    handler.addRepository(repository2)
+
+    assertThat(handler.handle(message))
+
+    verify(exactly = 0) { repository1.on(any()) }
+    verify(exactly = 0) { repository2.on(any()) }
+  }
+
+  @Test
+  fun `throw error when one repository threw exception`() {
+    val message = mockk<DomainEventMessage<*>>()
+    val repository1 = mockk<UpdatingModelRepository<*>>(relaxed = true)
+    every { repository1.canHandleMessage(any()) } returns true
+    every { repository1.on(any()) } throws Exception("test")
+    val repository2 = mockk<UpdatingModelRepository<*>>(relaxed = true)
+    every { repository2.canHandleMessage(any()) } returns true
+
+    val handler = AdhocEventMessageHandler()
+    handler.addRepository(repository1)
+    handler.addRepository(repository2)
+
+    assertThatThrownBy {
+      assertThat(handler.handle(message))
+    }.hasMessage("Failed to apply event to following UpdatingModelRepositories: [UpdatingModelRepository]")
+
+    verify { repository1.on(any()) }
+    verify { repository2.on(any()) }
   }
 }

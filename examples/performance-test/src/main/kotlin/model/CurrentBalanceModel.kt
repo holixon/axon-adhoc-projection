@@ -1,4 +1,4 @@
-package io.holixon.axon.projection.adhoc.model
+package io.holixon.axon.projection.adhoc.example.model
 
 import io.holixon.axon.projection.adhoc.ModelRepository
 import io.holixon.axon.projection.adhoc.ModelRepositoryConfig

@@ -1,4 +1,4 @@
-package io.holixon.axon.projection.adhoc
+package io.holixon.axon.projection.adhoc.example
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

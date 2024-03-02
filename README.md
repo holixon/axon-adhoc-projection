@@ -17,11 +17,11 @@ The `ModelRepository` directly accesses the event store and constructs the model
 To use the extension, simply include the artifact in your POM:
 
 ```xml
-    <dependency>
-      <groupId>io.holixon.axon</groupId>
-      <artifactId>axon-adhoc-projection-core</artifactId>
-      <version>0.0.2</version>
-    </dependency>
+<dependency>
+  <groupId>io.holixon.axon</groupId>
+  <artifactId>axon-adhoc-projection-core</artifactId>
+  <version>0.0.2</version>
+</dependency>
 ```
 
 Then define a model class:
@@ -100,7 +100,6 @@ For further examples refer to the *examples* module of this repository.
 ### Self-updating cache projection
 
 As an extension to the ModelRepository, the `UpdatingModelRepository` is able to update the underlying cache as new events arrive for cached model entities.
-The UpdatingModelRepository must be registered via Axon configuration to be handled as an EventHandler. Easiest way is to create it as Spring bean (when using Spring)
 
 ```kotlin
 @Component
@@ -116,15 +115,34 @@ class CurrentBalanceModelRepository(eventStore: EventStore) :
 }
 ```
 
+Currently, the easiest way to use the `UpdatingModelListener` is to use the Spring module of this plugin. This uses an auto-configuration to register all
+found beans of type `UpdatingModelRepository` as Axon EventHandler.
+
+```xml
+<dependency>
+  <groupId>io.holixon.axon</groupId>
+  <artifactId>axon-adhoc-projection-spring</artifactId>
+  <version>0.0.2</version>
+</dependency>
+```
+
+All UpdatingModelRepositories are using the same Axon processing group `adhoc-event-message-handler`. This processing group can 
+be further configured in the same way as any other processing group.
+
+Since all repositories are processed in the same processing group, an error in processing an event in one of the repositories lead to a 
+failure of the whole event for the processor so the event may be dead-lettered or retried with a backoff (depending on the configured behavior of the processingGroup).
+Nevertheless, the event will still be forwarded to _all_ repositories, even if one threw an error. Because the cache entry also stores the seqNo of the latest processed 
+event for each repository, an event will not be processed twice by any repository.
+
 ## Configuration
 
 The `ModelRepository` and subclasses take a `ModelRepositoryConfig` object for more detailed configuration.
 
-| Parameter        | Description                                                                                                                                                                                                                                     | Default value  |
-|------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------|
-| cache            | the cache implementation to use                                                                                                                                                                                                                 | LRUCache(1024) |
-| cacheRefreshTime | Time in ms a cache entry is considered up-to-date and no eventStore will be queried for new/missed events.<br/>When using the UpdatingModelRepository` consider a value other than 0 to use the advantage of the self-updating repo.            | 0 (ms)         |
-| forceCacheInsert | Just for UpdatingModelRepository - Configures the behavior when an event of an uncached entity is received.<br/>When _false_ the event is ignored, when _true_, a full replay of this entity is performed and the result is added to the cache. | false          |
+| Parameter        | Description                                                                                                                                                                                                                                    | Default value  |
+|------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------|
+| cache            | the cache implementation to use                                                                                                                                                                                                                | LRUCache(1024) |
+| cacheRefreshTime | Time in ms a cache entry is considered up-to-date and no eventStore will be queried for new/missed events.<br/>When using the UpdatingModelRepository consider a value other than 0 to use the advantage of the self-updating repo.            | 0 (ms)         |
+| forceCacheInsert | Just for UpdatingModelRepository - Configures the behavior when an event of an uncached entity is received.<br/>When _false_ the event is ignored, when _true_, a full replay of this entity is performed and the result is added to the cache.| false          |
 
 ## License
 

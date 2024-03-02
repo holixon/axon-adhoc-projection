@@ -1,10 +1,7 @@
-package io.holixon.axon.projection.adhoc.model.numwithdrawals
+package io.holixon.axon.projection.adhoc.example.model
 
 import io.holixon.axon.projection.adhoc.ModelRepositoryConfig
 import io.holixon.axon.projection.adhoc.UpdatingModelRepository
-import io.holixon.axon.projection.adhoc.model.BankAccountCreatedEvent
-import io.holixon.axon.projection.adhoc.model.MoneyWithdrawnEvent
-import mu.KLogging
 import org.axonframework.eventhandling.SequenceNumber
 import org.axonframework.eventhandling.Timestamp
 import org.axonframework.eventsourcing.eventstore.EventStore
@@ -30,13 +27,13 @@ data class NumWithdrawalsModel(
 
   @MessageHandler
   fun on(evt: MoneyWithdrawnEvent, @Timestamp messageTimestamp: Instant, @SequenceNumber version: Long) = copy(
-    numWithdrawals = numWithdrawals+1,
+    numWithdrawals = numWithdrawals + 1,
     lastModification = messageTimestamp,
     version = version,
   )
 }
 
-//@Component
+@Component
 class NumWithdrawalsModelRepository(eventStore: EventStore) :
   UpdatingModelRepository<NumWithdrawalsModel>(
     eventStore,

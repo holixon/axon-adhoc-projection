@@ -1,9 +1,9 @@
-package io.holixon.axon.projection.adhoc.rest
+package io.holixon.axon.projection.adhoc.example.rest
 
-import io.holixon.axon.projection.adhoc.model.BankAccountCreatedEvent
-import io.holixon.axon.projection.adhoc.model.MoneyDepositedEvent
-import io.holixon.axon.projection.adhoc.model.MoneyWithdrawnEvent
-import io.holixon.axon.projection.adhoc.model.OwnerChangedEvent
+import io.holixon.axon.projection.adhoc.example.model.BankAccountCreatedEvent
+import io.holixon.axon.projection.adhoc.example.model.MoneyDepositedEvent
+import io.holixon.axon.projection.adhoc.example.model.MoneyWithdrawnEvent
+import io.holixon.axon.projection.adhoc.example.model.OwnerChangedEvent
 import mu.KLogging
 import org.axonframework.eventhandling.DomainEventMessage
 import org.axonframework.eventhandling.GenericDomainEventMessage

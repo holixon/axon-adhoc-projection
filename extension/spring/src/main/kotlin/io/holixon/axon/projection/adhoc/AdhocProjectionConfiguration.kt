@@ -6,12 +6,13 @@ import mu.KLogging
 import org.axonframework.config.ConfigurerModule
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.boot.autoconfigure.AutoConfiguration
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Component
 
 /**
- * Auto-configuration class for the event processors of the UpdatingModelRepository.
+ * Autoconfiguration class for the event processors of the UpdatingModelRepository.
  *
  * Since we have our very custom EventMessageHandler, we need to register and configure it manually.
  */

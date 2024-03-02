@@ -1,10 +1,7 @@
-package io.holixon.axon.projection.adhoc.model.numdeposits
+package io.holixon.axon.projection.adhoc.example.model
 
 import io.holixon.axon.projection.adhoc.ModelRepositoryConfig
 import io.holixon.axon.projection.adhoc.UpdatingModelRepository
-import io.holixon.axon.projection.adhoc.model.BankAccountCreatedEvent
-import io.holixon.axon.projection.adhoc.model.MoneyDepositedEvent
-import mu.KLogging
 import org.axonframework.eventhandling.SequenceNumber
 import org.axonframework.eventhandling.Timestamp
 import org.axonframework.eventsourcing.eventstore.EventStore
@@ -30,7 +27,7 @@ data class NumDepositsModel(
 
   @MessageHandler
   fun on(evt: MoneyDepositedEvent, @Timestamp messageTimestamp: Instant, @SequenceNumber version: Long) = copy(
-    numDeposits = numDeposits+1,
+    numDeposits = numDeposits + 1,
     lastModification = messageTimestamp,
     version = version,
   )

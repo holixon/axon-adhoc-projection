@@ -1,6 +1,8 @@
 package io.holixon.axon.projection.adhoc
 
+import io.holixon.axon.projection.adhoc.AdhocEventMessageHandler.Companion.PROCESSING_GROUP
 import mu.KLogging
+import org.axonframework.config.ProcessingGroup
 import org.axonframework.eventhandling.DomainEventMessage
 import org.axonframework.eventhandling.EventMessage
 import org.axonframework.eventhandling.EventMessageHandler
@@ -8,11 +10,14 @@ import org.axonframework.eventhandling.EventMessageHandler
 /**
  * Special EventMessageHandler to react to all DomainEventMessages and manually check if we have a matching model class method.
  */
+@ProcessingGroup(PROCESSING_GROUP)
 class AdhocEventMessageHandler : EventMessageHandler {
 
   private val updatingModelRepositories: MutableList<UpdatingModelRepository<*>> = mutableListOf()
 
-  companion object : KLogging()
+  companion object : KLogging() {
+    const val PROCESSING_GROUP = "adhoc-event-message-handler"
+  }
 
   /**
    * Add an UpdatingModelRepository to monitor for relevant eventHandler methods
@@ -30,8 +35,22 @@ class AdhocEventMessageHandler : EventMessageHandler {
 
     logger.trace { "Received event ${event.aggregateIdentifier}/${event.sequenceNumber} of type ${event.payloadType.simpleName}" }
 
-    return updatingModelRepositories.filter { it.canHandleMessage(event) }
-      .forEach { it.on(event) }
+    val failed = mutableListOf<UpdatingModelRepository<*>>()
+    updatingModelRepositories.filter { it.canHandleMessage(event) }
+      .forEach {
+        try {
+          it.on(event)
+        } catch (e: java.lang.Exception) {
+          logger.error(e) { "Error while applying event ${event.payloadType.simpleName} with seqNo ${event.sequenceNumber} of aggregateId ${event.aggregateIdentifier}" }
+          failed.add(it)
+        }
+      }
+
+    if (failed.isNotEmpty()) {
+      failed.map { it.javaClass.simpleName }.let {
+        throw Exception("Failed to apply event to following UpdatingModelRepositories: $it")
+      }
+    }
   }
 
   override fun canHandle(message: EventMessage<*>?): Boolean {
