@@ -57,6 +57,10 @@ class AdhocEventMessageHandler : EventMessageHandler {
 
     return updatingModelRepositories.any { it.canHandleMessage(message) }
   }
+
+  override fun prepareReset() {
+    updatingModelRepositories.forEach { it.resetCache() }
+  }
 }
 
 /**

@@ -124,6 +124,13 @@ open class ModelRepository<T : Any>(
 
     return newCacheEntry.model
   }
+
+  /**
+   * Clears the used cache of any cacheEntries.
+   */
+  fun resetCache() {
+    this.cache.removeAll()
+  }
 }
 
 /**

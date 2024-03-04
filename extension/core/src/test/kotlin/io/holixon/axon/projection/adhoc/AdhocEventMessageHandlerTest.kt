@@ -128,4 +128,21 @@ class AdhocEventMessageHandlerTest {
     verify { repository1.on(any()) }
     verify { repository2.on(any()) }
   }
+
+  @Test
+  fun `reset processor`() {
+    val repository1 = mockk<UpdatingModelRepository<*>>(relaxed = true)
+    every { repository1.canHandleMessage(any()) } returns false
+    val repository2 = mockk<UpdatingModelRepository<*>>(relaxed = true)
+    every { repository2.canHandleMessage(any()) } returns true
+
+    val handler = AdhocEventMessageHandler()
+    handler.addRepository(repository1)
+    handler.addRepository(repository2)
+
+    handler.prepareReset()
+
+    verify { repository1.resetCache() }
+    verify { repository2.resetCache() }
+  }
 }
