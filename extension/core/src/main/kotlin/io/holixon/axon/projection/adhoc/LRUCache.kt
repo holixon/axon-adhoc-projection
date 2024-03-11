@@ -31,6 +31,8 @@ class LRUCache(val maxSize: Int) : Cache {
 
   override fun remove(key: Any?): Boolean = internalCache.remove(key) != null
 
+  override fun removeAll() = internalCache.clear()
+
   override fun containsKey(key: Any?): Boolean = internalCache.containsKey(key)
 
   override fun registerCacheEntryListener(cacheEntryListener: Cache.EntryListener?): Registration = Registration { true }

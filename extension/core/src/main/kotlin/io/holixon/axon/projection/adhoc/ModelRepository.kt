@@ -4,7 +4,9 @@ import mu.KLogging
 import org.axonframework.common.caching.Cache
 import org.axonframework.common.caching.Cache.EntryListenerAdapter
 import org.axonframework.common.caching.NoCache
+import org.axonframework.eventsourcing.eventstore.DomainEventStream
 import org.axonframework.eventsourcing.eventstore.EventStore
+import org.axonframework.serialization.UnknownSerializedType
 import java.time.Instant
 import java.util.*
 
@@ -35,7 +37,6 @@ open class ModelRepository<T : Any>(
 
   init {
     require(config.cacheRefreshTime >= 0L) { "The cache refresh time must not be negative" }
-    cache.registerCacheEntryListener(LoggingCacheEntryListener(modelClass.simpleName))
   }
 
   /**
@@ -51,6 +52,7 @@ open class ModelRepository<T : Any>(
       if (config.cacheRefreshTime == 0L || cacheEntry.created.isBefore(Instant.now().minusMillis(config.cacheRefreshTime))) {
         Optional.of(readAndUpdateModelFromCache(aggregateId))
       } else {
+        logger.trace { "Cached entry of $aggregateId still considered up to date" }
         Optional.of(cacheEntry.model)
       }
     } else {
@@ -58,8 +60,8 @@ open class ModelRepository<T : Any>(
     }
   }
 
-  internal fun readModelFromScratch(aggregateId: String, seqNo: Long = Long.MAX_VALUE): Optional<T> {
-    val cacheEntry = createCacheEntryFromScratch(aggregateId, seqNo)
+  internal fun readModelFromScratch(aggregateId: String): Optional<T> {
+    val cacheEntry = createCacheEntryFromScratch(aggregateId)
 
     return if (cacheEntry != null) {
       cache.put(aggregateId, cacheEntry)
@@ -69,13 +71,13 @@ open class ModelRepository<T : Any>(
     }
   }
 
-  internal fun createCacheEntryFromScratch(aggregateId: String, seqNo: Long = Long.MAX_VALUE): CacheEntry<T>? {
+  private fun createCacheEntryFromScratch(aggregateId: String): CacheEntry<T>? {
     logger.debug { "Reading model for ${modelClass.simpleName} with ID $aggregateId from scratch" }
     val events = if (config.ignoreSnapshotEvents) {
       // read from the very first event and not starting with latest snapshot
-      eventStore.readEvents(aggregateId, 0L)
+      readEvents(aggregateId, 0L)
     } else {
-      eventStore.readEvents(aggregateId)
+      readEvents(aggregateId)
     }
     if (!events.hasNext()) {
       return null
@@ -85,9 +87,8 @@ open class ModelRepository<T : Any>(
 
     var lastSeqNo = 0L
     events
-      .filter { it.sequenceNumber <= seqNo }
       .forEachRemaining { event ->
-        logger.debug { "Reading event ${event.payloadType.simpleName} with seqNo ${event.sequenceNumber} for aggregate ID $aggregateId" }
+        logger.trace { "Reading event ${event.payloadType.simpleName} with seqNo ${event.sequenceNumber} for aggregate ID $aggregateId" }
         lastSeqNo = event.sequenceNumber
         model = eventApplier.applyEvent(model, event)
       }
@@ -96,7 +97,7 @@ open class ModelRepository<T : Any>(
   }
 
 
-  internal fun readAndUpdateModelFromCache(aggregateId: String, seqNo: Long = Long.MAX_VALUE): T {
+  internal fun readAndUpdateModelFromCache(aggregateId: String): T {
     val currentCacheEntry = cache.get<String, CacheEntry<T>>(aggregateId)
     logger.debug { "Reading cached model for ${modelClass.simpleName} with ID $aggregateId and seqNo ${currentCacheEntry.seqNo}" }
 
@@ -113,12 +114,11 @@ open class ModelRepository<T : Any>(
     }
     var model: T = currentCacheEntry.model
 
-    val events = eventStore.readEvents(aggregateId, currentCacheEntry.seqNo + 1)
+    val events = readEvents(aggregateId, currentCacheEntry.seqNo + 1)
 
     events
-      .filter { it.sequenceNumber <= seqNo }
       .forEachRemaining { event ->
-        logger.debug { "Reading event ${event.payloadType.simpleName} with seqNo ${event.sequenceNumber} for aggregate ID $aggregateId" }
+        logger.trace { "Reading event ${event.payloadType.simpleName} with seqNo ${event.sequenceNumber} for aggregate ID $aggregateId" }
         model = eventApplier.applyEvent(model, event)
       }
 
@@ -128,26 +128,30 @@ open class ModelRepository<T : Any>(
     return newCacheEntry.model
   }
 
-  internal class LoggingCacheEntryListener(
-    private val cacheName: String
-  ) : EntryListenerAdapter() {
-    companion object : KLogging()
+  /**
+   * Reads all events
+   */
+  internal fun readEvents(aggregateId: String, seqNo: Long? = null): DomainEventStream {
+    val stream = if (seqNo == null )
+      eventStore.readEvents(aggregateId)
+    else
+      eventStore.readEvents(aggregateId, seqNo)
 
-    override fun onEntryCreated(key: Any?, value: Any?) {
-      logger.trace { "$cacheName: Cache entry $key created" }
-    }
+      return stream.filter { it.payloadType != UnknownSerializedType::class.java }
+  }
 
-    override fun onEntryExpired(key: Any?) {
-      logger.trace { "$cacheName: Cache entry $key expired" }
-    }
-
-    override fun onEntryRemoved(key: Any?) {
-      logger.trace { "$cacheName: Cache entry $key removed" }
-    }
+  /**
+   * Clears the used cache of any cacheEntries.
+   */
+  fun resetCache() {
+    this.cache.removeAll()
   }
 }
 
-internal data class CacheEntry<T>(
+/**
+ * A cache entry for a model.
+ */
+data class CacheEntry<T>(
   val aggregateId: String,
   val seqNo: Long,
   val model: T,

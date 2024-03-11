@@ -1,8 +1,0 @@
-axon:
-  serializer:
-    events: jackson
-    messages: jackson
-    general: jackson
-
-logging.level:
-    io.holixon: DEBUG

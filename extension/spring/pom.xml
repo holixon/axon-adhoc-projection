@@ -9,35 +9,26 @@
     <version>0.0.3-SNAPSHOT</version>
   </parent>
 
-  <artifactId>axon-adhoc-projection-core</artifactId>
-  <description>The core extension module</description>
+  <artifactId>axon-adhoc-projection-spring</artifactId>
+  <description>The spring extension module</description>
 
   <dependencies>
     <dependency>
-      <groupId>org.axonframework</groupId>
-      <artifactId>axon-modelling</artifactId>
-      <scope>provided</scope>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.axonframework</groupId>
-      <artifactId>axon-messaging</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.axonframework</groupId>
-      <artifactId>axon-eventsourcing</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.axonframework</groupId>
-      <artifactId>axon-configuration</artifactId>
-    </dependency>
-
-    <!-- TEST -->
     <dependency>
       <groupId>org.axonframework</groupId>
       <artifactId>axon-spring-boot-starter</artifactId>
-      <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>io.holixon.axon</groupId>
+      <artifactId>axon-adhoc-projection-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- TEST -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>

@@ -46,31 +46,6 @@ class ModelRepositoryTest {
   }
 
   @Test
-  fun `create model versioned from scratch`() {
-    val bankAccountId = UUID.randomUUID()
-    mockEventStore(
-      bankAccountId, listOf(
-        BankAccountCreatedEvent(bankAccountId, "Alice"),
-        MoneyDepositedEvent(bankAccountId, 100),
-        MoneyDepositedEvent(bankAccountId, 30),
-        MoneyDepositedEvent(bankAccountId, 10),
-      )
-    )
-
-    val model = repository.readModelFromScratch(bankAccountId.toString(), 1)
-
-    assertThat(model).isPresent
-
-    val cacheEntrySlot = slot<CacheEntry<CurrentBalanceImmutableModel>>()
-
-    verify { eventStore.readEvents(eq(bankAccountId.toString())) }
-    verify { cache.put(eq(bankAccountId.toString()), capture(cacheEntrySlot)) }
-
-    assertThat(cacheEntrySlot.captured.seqNo).isEqualTo(1)
-    assertThat(cacheEntrySlot.captured.model.currentBalanceInEuroCent).isEqualTo(100)
-  }
-
-  @Test
   fun `create model from scratch ignore snapshot`() {
     val repository = ModelRepository(eventStore, CurrentBalanceImmutableModel::class.java, ModelRepositoryConfig(cache = cache, ignoreSnapshotEvents = true))
     val bankAccountId = UUID.randomUUID()
