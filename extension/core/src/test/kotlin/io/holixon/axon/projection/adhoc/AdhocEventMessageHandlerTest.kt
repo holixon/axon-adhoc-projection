@@ -19,9 +19,7 @@ class AdhocEventMessageHandlerTest {
     val repository2 = mockk<UpdatingModelRepository<*>>(relaxed = true)
     every { repository2.canHandleMessage(any()) } returns true
 
-    val handler = AdhocEventMessageHandler()
-    handler.addRepository(repository1)
-    handler.addRepository(repository2)
+    val handler = AdhocEventMessageHandler(listOf(repository1, repository2))
 
     assertThat(handler.handle(message))
 
@@ -33,7 +31,7 @@ class AdhocEventMessageHandlerTest {
   fun `cannot handle without repositories`() {
     val message = mockk<DomainEventMessage<*>>()
 
-    val handler = AdhocEventMessageHandler()
+    val handler = AdhocEventMessageHandler(emptyList())
 
     assertThat(handler.canHandle(message)).isFalse()
   }
@@ -44,8 +42,7 @@ class AdhocEventMessageHandlerTest {
     val repository1 = mockk<UpdatingModelRepository<*>>()
     every { repository1.canHandleMessage(any()) } returns true
 
-    val handler = AdhocEventMessageHandler()
-    handler.addRepository(repository1)
+    val handler = AdhocEventMessageHandler(listOf(repository1))
 
     assertThat(handler.canHandle(message)).isFalse()
   }
@@ -56,8 +53,7 @@ class AdhocEventMessageHandlerTest {
     val repository1 = mockk<UpdatingModelRepository<*>>()
     every { repository1.canHandleMessage(any()) } returns true
 
-    val handler = AdhocEventMessageHandler()
-    handler.addRepository(repository1)
+    val handler = AdhocEventMessageHandler(listOf(repository1))
 
     assertThat(handler.canHandle(message)).isTrue()
   }
@@ -68,8 +64,7 @@ class AdhocEventMessageHandlerTest {
     val repository1 = mockk<UpdatingModelRepository<*>>()
     every { repository1.canHandleMessage(any()) } returns false
 
-    val handler = AdhocEventMessageHandler()
-    handler.addRepository(repository1)
+    val handler = AdhocEventMessageHandler(listOf(repository1))
 
     assertThat(handler.canHandle(message)).isFalse()
   }
@@ -82,9 +77,7 @@ class AdhocEventMessageHandlerTest {
     val repository2 = mockk<UpdatingModelRepository<*>>()
     every { repository2.canHandleMessage(any()) } returns true
 
-    val handler = AdhocEventMessageHandler()
-    handler.addRepository(repository1)
-    handler.addRepository(repository2)
+    val handler = AdhocEventMessageHandler(listOf(repository1, repository2))
 
     assertThat(handler.canHandle(message)).isTrue()
   }
@@ -97,9 +90,7 @@ class AdhocEventMessageHandlerTest {
     val repository2 = mockk<UpdatingModelRepository<*>>()
     every { repository2.canHandleMessage(any()) } returns true
 
-    val handler = AdhocEventMessageHandler()
-    handler.addRepository(repository1)
-    handler.addRepository(repository2)
+    val handler = AdhocEventMessageHandler(listOf(repository1, repository2))
 
     assertThat(handler.handle(message))
 
@@ -116,9 +107,7 @@ class AdhocEventMessageHandlerTest {
     val repository2 = mockk<UpdatingModelRepository<*>>(relaxed = true)
     every { repository2.canHandleMessage(any()) } returns true
 
-    val handler = AdhocEventMessageHandler()
-    handler.addRepository(repository1)
-    handler.addRepository(repository2)
+    val handler = AdhocEventMessageHandler(listOf(repository1, repository2))
 
     assertThatThrownBy {
       assertThat(handler.handle(message))
@@ -136,9 +125,7 @@ class AdhocEventMessageHandlerTest {
     val repository2 = mockk<UpdatingModelRepository<*>>(relaxed = true)
     every { repository2.canHandleMessage(any()) } returns true
 
-    val handler = AdhocEventMessageHandler()
-    handler.addRepository(repository1)
-    handler.addRepository(repository2)
+    val handler = AdhocEventMessageHandler(listOf(repository1, repository2))
 
     handler.prepareReset()
 
