@@ -8,4 +8,4 @@ axon:
     general: jackson
 
 logging.level:
-  io.holixon: DEBUG
+  io.holixon: TRACE

@@ -9,7 +9,7 @@
     <version>0.0.3-SNAPSHOT</version>
   </parent>
 
-  <artifactId>axon-adhoc-projection-examples-performance-test</artifactId>
+  <artifactId>axon-adhoc-projection-examples-banking-kotlin</artifactId>
   <description>Performance test</description>
 
   <dependencies>

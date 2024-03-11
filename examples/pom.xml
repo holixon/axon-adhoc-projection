@@ -23,7 +23,8 @@
   </properties>
 
   <modules>
-    <module>performance-test</module>
+    <module>banking-java</module>
+    <module>banking-kotlin</module>
   </modules>
 
   <dependencies/>

@@ -1,0 +1,27 @@
+
+services:
+
+  axonserver:
+    container_name: "srv_axon_1"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://axon-server:8024/actuator/health"]
+      interval: 5s
+      timeout: 10s
+      retries: 30
+      start_period: 10s
+    image: axoniq/axonserver:2023.1.2-jdk-17-dev
+#    profiles: ["infrastructure", "cfg-op", "axon"]
+    hostname: axonserver
+    environment:
+      AXONIQ_AXONSERVER_DEVMODE_ENABLED: "true"
+      AXONIQ_AXONSERVER_SSL_ENABLED: "false"
+      AXONIQ_AXONSERVER_NAME: "localhost"
+      AXONIQ_AXONSERVER_HOSTNAME: "localhost"
+      AXONIQ_AXONSERVER_STANDALONE: "true"
+    ports:
+      - "8024:8024"
+      - "8124:8124"
+      - "8224:8224"
+    cpus: 2.0
+    mem_reservation: "512M"
+    mem_limit: "2G"
