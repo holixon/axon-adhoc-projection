@@ -134,6 +134,22 @@ failure of the whole event for the processor so the event may be dead-lettered o
 Nevertheless, the event will still be forwarded to _all_ repositories, even if one threw an error. Because the cache entry also stores the seqNo of the latest processed 
 event for each repository, an event will not be processed twice by any repository.
 
+The event-processing itself is not configured any further, so by default a TrackingEventProcessor using a TailToken will be created. It is strongly advised to add a configuration 
+for using a HeadToken to not replay the whole eventStore:
+
+```kotlin
+@Bean
+fun segmentCountConfigurerModule(): ConfigurerModule? {
+  return ConfigurerModule { configurer: Configurer ->
+    configurer.eventProcessing { processingConfigurer: EventProcessingConfigurer ->
+      processingConfigurer.registerTrackingEventProcessorConfiguration(AdhocEventMessageHandler.PROCESSING_GROUP) {
+        TrackingEventProcessorConfiguration.forParallelProcessing(4).andInitialTrackingToken { it.createHeadToken() }
+      }
+    }
+  }
+}
+```
+
 ## Configuration
 
 The `ModelRepository` and subclasses take a `ModelRepositoryConfig` object for more detailed configuration.

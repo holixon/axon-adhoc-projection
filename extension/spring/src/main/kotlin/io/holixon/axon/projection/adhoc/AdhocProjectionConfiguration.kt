@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Component
 
 /**
@@ -25,7 +26,9 @@ class AdhocProjectionConfiguration {
   @Bean
   fun adhocEventProcessingConfigurerModule(adhocEventMessageHandler: AdhocEventMessageHandler): ConfigurerModule {
     return ConfigurerModule { c ->
-      c.registerEventHandler { adhocEventMessageHandler }
+      c.eventProcessing {
+        it.registerEventHandler {adhocEventMessageHandler}
+        it.assignProcessingGroup(AdhocEventMessageHandler.PROCESSING_GROUP, AdhocEventMessageHandler.PROCESSING_GROUP) }
     }
   }
 
@@ -33,35 +36,6 @@ class AdhocProjectionConfiguration {
    * The adhocEventMessageHandler.
    */
   @Bean
-  fun adhocEventMessageHandler() = AdhocEventMessageHandler()
-
-  /**
-   * Register the post initializer.
-   */
-  @Bean
-  fun adhocEventMessageHandlerPostInitializer(
-    updatingModelRepository: List<UpdatingModelRepository<*>>,
-    adhocEventMessageHandler: AdhocEventMessageHandler
-  ) = AdhocEventMessageHandlerPostInitializer(updatingModelRepository, adhocEventMessageHandler)
-}
-
-/**
- * We have a circular dependency here. The UpdatingModelRepositories require an eventStore,
- * but to start the Axon stack with the adhocEventMessageHandler we need the UpdatingModelRepositories.
- * <br /><br />
- * To solve this, we add the repositories to the eventMessageHandler just after the Spring context is finished.
- */
-class AdhocEventMessageHandlerPostInitializer(
-  private val updatingModelRepository: List<UpdatingModelRepository<*>>,
-  private val adhocEventMessageHandler: AdhocEventMessageHandler
-) : InitializingBean {
-
-  companion object : KLogging()
-
-  override fun afterPropertiesSet() {
-    logger.debug { "Initialize AdhocEventMessageHandler" }
-    updatingModelRepository.forEach {
-      adhocEventMessageHandler.addRepository(it)
-    }
-  }
+  fun adhocEventMessageHandler(@Lazy updatingModelRepository: List<UpdatingModelRepository<*>>) =
+    AdhocEventMessageHandler(updatingModelRepository)
 }

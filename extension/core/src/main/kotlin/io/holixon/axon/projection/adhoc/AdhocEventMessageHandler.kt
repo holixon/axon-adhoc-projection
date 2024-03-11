@@ -11,22 +11,12 @@ import org.axonframework.eventhandling.EventMessageHandler
  * Special EventMessageHandler to react to all DomainEventMessages and manually check if we have a matching model class method.
  */
 @ProcessingGroup(PROCESSING_GROUP)
-class AdhocEventMessageHandler : EventMessageHandler {
-
-  private val updatingModelRepositories: MutableList<UpdatingModelRepository<*>> = mutableListOf()
+class AdhocEventMessageHandler(
+  private val updatingModelRepositories: List<UpdatingModelRepository<*>>
+) : EventMessageHandler {
 
   companion object : KLogging() {
     const val PROCESSING_GROUP = "adhoc-event-message-handler"
-  }
-
-  /**
-   * Add an UpdatingModelRepository to monitor for relevant eventHandler methods
-   *
-   * @param repository the repository to add
-   */
-  fun addRepository(repository: UpdatingModelRepository<*>) {
-    logger.debug { "Adding ${repository.javaClass.simpleName} to list of observed repositories" }
-    updatingModelRepositories.add(repository)
   }
 
   override fun handle(event: EventMessage<*>?) {

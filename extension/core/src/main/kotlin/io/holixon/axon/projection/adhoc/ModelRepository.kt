@@ -4,7 +4,9 @@ import mu.KLogging
 import org.axonframework.common.caching.Cache
 import org.axonframework.common.caching.Cache.EntryListenerAdapter
 import org.axonframework.common.caching.NoCache
+import org.axonframework.eventsourcing.eventstore.DomainEventStream
 import org.axonframework.eventsourcing.eventstore.EventStore
+import org.axonframework.serialization.UnknownSerializedType
 import java.time.Instant
 import java.util.*
 
@@ -50,6 +52,7 @@ open class ModelRepository<T : Any>(
       if (config.cacheRefreshTime == 0L || cacheEntry.created.isBefore(Instant.now().minusMillis(config.cacheRefreshTime))) {
         Optional.of(readAndUpdateModelFromCache(aggregateId))
       } else {
+        logger.trace { "Cached entry of $aggregateId still considered up to date" }
         Optional.of(cacheEntry.model)
       }
     } else {
@@ -72,9 +75,9 @@ open class ModelRepository<T : Any>(
     logger.debug { "Reading model for ${modelClass.simpleName} with ID $aggregateId from scratch" }
     val events = if (config.ignoreSnapshotEvents) {
       // read from the very first event and not starting with latest snapshot
-      eventStore.readEvents(aggregateId, 0L)
+      readEvents(aggregateId, 0L)
     } else {
-      eventStore.readEvents(aggregateId)
+      readEvents(aggregateId)
     }
     if (!events.hasNext()) {
       return null
@@ -111,7 +114,7 @@ open class ModelRepository<T : Any>(
     }
     var model: T = currentCacheEntry.model
 
-    val events = eventStore.readEvents(aggregateId, currentCacheEntry.seqNo + 1)
+    val events = readEvents(aggregateId, currentCacheEntry.seqNo + 1)
 
     events
       .forEachRemaining { event ->
@@ -123,6 +126,18 @@ open class ModelRepository<T : Any>(
     cache.put(aggregateId, newCacheEntry)
 
     return newCacheEntry.model
+  }
+
+  /**
+   * Reads all events
+   */
+  internal fun readEvents(aggregateId: String, seqNo: Long? = null): DomainEventStream {
+    val stream = if (seqNo == null )
+      eventStore.readEvents(aggregateId)
+    else
+      eventStore.readEvents(aggregateId, seqNo)
+
+      return stream.filter { it.payloadType != UnknownSerializedType::class.java }
   }
 
   /**
