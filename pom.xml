@@ -7,7 +7,7 @@
   <artifactId>axon-adhoc-projection-root</artifactId>
   <name>${project.artifactId}</name>
   <description>This library provides a stateless model repository for Axon Framework using selective event loading executed during query.</description>
-  <version>0.0.2</version>
+  <version>0.1.0</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -18,7 +18,7 @@
   <properties>
     <!-- JVM -->
     <java.version>17</java.version>
-    <kotlin.version>1.9.22</kotlin.version>
+    <kotlin.version>1.9.23</kotlin.version>
 
     <!-- LIBS -->
     <kotlin-logging.version>3.0.5</kotlin-logging.version>
@@ -26,7 +26,8 @@
     <!-- TEST -->
     <dom4j.version>2.1.4</dom4j.version>
     <jaxen.version>2.0.0</jaxen.version>
-    <mockk.version>1.13.9</mockk.version>
+    <awaitility.version>4.2.0</awaitility.version>
+    <mockk.version>1.13.10</mockk.version>
 
     <!-- MAVEN -->
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -55,7 +56,7 @@
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
-        <version>3.2.2</version>
+        <version>3.2.3</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -64,7 +65,7 @@
       <dependency>
         <groupId>org.axonframework</groupId>
         <artifactId>axon-bom</artifactId>
-        <version>4.9.3</version>
+        <version>4.9.4</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -226,7 +227,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-assembly-plugin</artifactId>
-          <version>3.6.0</version>
+          <version>3.7.0</version>
           <configuration>
             <descriptorSourceDirectory>assembly</descriptorSourceDirectory>
             <archiverConfig>
@@ -310,7 +311,7 @@
         <plugin>
           <groupId>org.jetbrains.dokka</groupId>
           <artifactId>dokka-maven-plugin</artifactId>
-          <version>1.9.10</version>
+          <version>1.9.20</version>
           <configuration>
             <!-- Conditional on maven property set per-project -->
             <skip>${dokka.skip}</skip>
@@ -411,7 +412,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-gpg-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>3.2.0</version>
           <configuration>
             <gpgArguments>
               <arg>--batch</arg>

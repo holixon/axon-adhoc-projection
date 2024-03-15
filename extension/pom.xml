@@ -6,7 +6,7 @@
   <parent>
     <groupId>io.holixon.axon</groupId>
     <artifactId>axon-adhoc-projection-root</artifactId>
-    <version>0.0.2</version>
+    <version>0.1.0</version>
   </parent>
 
   <artifactId>axon-adhoc-projection-extension</artifactId>
@@ -16,6 +16,7 @@
 
   <modules>
     <module>core</module>
+    <module>spring</module>
   </modules>
 
   <properties>

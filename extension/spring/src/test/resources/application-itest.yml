@@ -1,0 +1,10 @@
+axon:
+  serializer:
+    events: jackson
+    messages: jackson
+    general: jackson
+  axonserver:
+    enabled: false
+
+logging.level:
+    io.holixon: DEBUG

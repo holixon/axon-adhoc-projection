@@ -1,0 +1,11 @@
+server:
+  port: 8088
+
+axon:
+  serializer:
+    events: jackson
+    messages: jackson
+    general: jackson
+
+logging.level:
+  io.holixon: TRACE
