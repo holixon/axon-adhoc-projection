@@ -7,7 +7,7 @@
   <artifactId>axon-adhoc-projection-root</artifactId>
   <name>${project.artifactId}</name>
   <description>This library provides a stateless model repository for Axon Framework using selective event loading executed during query.</description>
-  <version>0.0.3-SNAPSHOT</version>
+  <version>0.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>

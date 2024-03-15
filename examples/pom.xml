@@ -6,7 +6,7 @@
   <parent>
     <groupId>io.holixon.axon</groupId>
     <artifactId>axon-adhoc-projection-root</artifactId>
-    <version>0.0.3-SNAPSHOT</version>
+    <version>0.1.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>axon-adhoc-projection-examples-root</artifactId>
