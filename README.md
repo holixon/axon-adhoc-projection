@@ -23,7 +23,7 @@ To use the extension, simply include the artifact in your POM:
 <dependency>
     <groupId>io.holixon.axon</groupId>
     <artifactId>axon-adhoc-projection-core</artifactId>
-    <version>0.0.2</version>
+    <version>0.1.0</version>
 </dependency>
 ```
 
@@ -147,7 +147,7 @@ found beans of type `UpdatingModelRepository` as Axon EventHandler.
 <dependency>
     <groupId>io.holixon.axon</groupId>
     <artifactId>axon-adhoc-projection-spring</artifactId>
-    <version>0.0.2</version>
+    <version>0.1.0</version>
 </dependency>
 ```
 
