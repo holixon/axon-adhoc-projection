@@ -316,6 +316,9 @@
             <!-- Conditional on maven property set per-project -->
             <skip>${dokka.skip}</skip>
             <jdkVersion>${java.version}</jdkVersion>
+            <sourceDirectories>
+              <dir>${project.basedir}/src/main/kotlin</dir>
+            </sourceDirectories>
             <sourceLinks>
               <link>
                 <path>${project.basedir}</path>
