@@ -28,7 +28,7 @@
     <jaxen.version>2.0.0</jaxen.version>
 
     <awaitility.version>4.3.0</awaitility.version>
-    <mockk.version>1.14.0</mockk.version>
+    <mockk.version>1.14.5</mockk.version>
 
     <!-- MAVEN -->
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
